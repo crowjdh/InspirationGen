@@ -11,8 +11,8 @@ import kr.blogspot.crowjdh.midisupport.MidiFile
  *  description
  */
 
-fun MidiFile.removeTracks(fromIndex: Int, toIndex: Int) {
-    tracks.removeRange(fromIndex, toIndex)
+fun MidiFile.removeTracks(range: IntRange) {
+    tracks.removeRange(range)
     val trackCountField = javaClass.getDeclaredField("mTrackCount")
     trackCountField.isAccessible = true
     trackCountField.set(this, tracks.size)

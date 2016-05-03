@@ -9,7 +9,7 @@ import java.io.File
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
-    val cacheFile = File(cacheDir, "temp.mid")
+    var cacheFile: File by Delegates.notNull()
 
     var mPlayer: MediaPlayer by Delegates.notNull()
 
@@ -17,15 +17,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initCacheFile()
         initMidiFile()
         initMediaPlayer()
 
-        playMediaPalyer()
+        playMediaPlayer()
+    }
+
+    private fun initCacheFile() {
+        cacheFile = File(cacheDir, "temp.mid")
     }
 
     private fun initMidiFile() {
         val midiFile = MidiFile(resources, R.raw.midi_sound)
-        midiFile.removeTracks(1, 4)
+        midiFile.removeTracks(1..3)
         midiFile.writeToFile(cacheFile)
     }
 
@@ -35,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         mPlayer.prepare()
     }
 
-    private fun playMediaPalyer() {
+    private fun playMediaPlayer() {
         mPlayer.start()
     }
 }

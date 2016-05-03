@@ -7,7 +7,9 @@ package kr.blogspot.crowjdh.inspirationgen.extensions
  *  description
  */
 
-inline fun <reified T> MutableList<T>.removeRange(fromIndex: Int, toIndex: Int) {
+inline fun <reified T> MutableList<T>.removeRange(range: IntRange) {
+    val fromIndex = range.start
+    val toIndex = range.last
     if (fromIndex == toIndex) {
         return
     }
@@ -22,7 +24,7 @@ inline fun <reified T> MutableList<T>.removeRange(fromIndex: Int, toIndex: Int) 
         throw IndexOutOfBoundsException("fromIndex $fromIndex > toIndex $toIndex")
     }
 
-    val filtered = filterIndexed { i, t -> i < fromIndex || i >= toIndex }
+    val filtered = filterIndexed { i, t -> i < fromIndex || i > toIndex }
     clear()
     addAll(filtered)
 }
