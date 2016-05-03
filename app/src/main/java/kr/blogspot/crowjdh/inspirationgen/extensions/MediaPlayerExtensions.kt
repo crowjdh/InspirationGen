@@ -5,8 +5,7 @@ import android.media.MediaPlayer
 /**
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 4.
  *
- * MediaPlayerFile
- *  description
+ * MediaPlayerExtensions
  */
 
 fun MediaPlayer.startIfNotPlaying() {

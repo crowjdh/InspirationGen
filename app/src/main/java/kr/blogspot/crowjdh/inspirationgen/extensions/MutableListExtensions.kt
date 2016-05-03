@@ -4,7 +4,6 @@ package kr.blogspot.crowjdh.inspirationgen.extensions
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 3.
  *
  * MutableListExtensions
- *  description
  */
 
 inline fun <reified T> MutableList<T>.removeRange(range: IntRange) {

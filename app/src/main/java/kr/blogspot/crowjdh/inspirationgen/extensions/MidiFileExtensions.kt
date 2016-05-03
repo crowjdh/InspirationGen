@@ -8,7 +8,6 @@ import kr.blogspot.crowjdh.midisupport.MidiFile
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 3.
  *
  * MidiFileExtensions
- *  description
  */
 
 fun MidiFile.removeTracks(range: IntRange) {
