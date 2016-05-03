@@ -4,7 +4,9 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kr.blogspot.crowjdh.inspirationgen.extensions.MidiFile
+import kr.blogspot.crowjdh.inspirationgen.extensions.pauseIfPlaying
 import kr.blogspot.crowjdh.inspirationgen.extensions.removeTracks
+import kr.blogspot.crowjdh.inspirationgen.extensions.startIfNotPlaying
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -20,8 +22,18 @@ class MainActivity : AppCompatActivity() {
         initCacheFile()
         initMidiFile()
         initMediaPlayer()
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         playMediaPlayer()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        pauseMediaPlayer()
     }
 
     private fun initCacheFile() {
@@ -41,6 +53,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun playMediaPlayer() {
-        mPlayer.start()
+        mPlayer.startIfNotPlaying()
+    }
+
+    private fun pauseMediaPlayer() {
+        mPlayer.pauseIfPlaying()
     }
 }
