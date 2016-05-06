@@ -4,7 +4,7 @@ package kr.blogspot.crowjdh.inspirationgen.models
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 4.
  *
  * Notable
- *  description
+ *  A musical component which has length and can be presented on a music sheet.
  */
 
 interface Notable: TickType {

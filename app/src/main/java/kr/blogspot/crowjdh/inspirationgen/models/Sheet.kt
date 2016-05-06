@@ -6,7 +6,6 @@ import java.util.*
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 4.
  *
  * Sheet
- *  description
  */
 
 val DEFAULT_TIME_SIGNATURE = TimeSignature(4, NoteLength.QUARTER, 480)

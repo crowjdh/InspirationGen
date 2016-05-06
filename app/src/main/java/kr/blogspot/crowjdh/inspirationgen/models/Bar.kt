@@ -6,7 +6,6 @@ import java.util.*
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 4.
  *
  * Bar
- *  description
  */
 
 class Bar(timeSignature: TimeSignature? = null): TickType {

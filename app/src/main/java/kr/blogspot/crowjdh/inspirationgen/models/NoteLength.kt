@@ -4,7 +4,7 @@ package kr.blogspot.crowjdh.inspirationgen.models
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 4.
  *
  * NoteLength
- *  description
+ *  Length of Notable.
  */
 
 enum class NoteLength(val length: Int) {
