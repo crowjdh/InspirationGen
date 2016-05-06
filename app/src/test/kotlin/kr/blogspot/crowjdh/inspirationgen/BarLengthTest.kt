@@ -1,7 +1,7 @@
 package kr.blogspot.crowjdh.inspirationgen
 
 import com.google.common.collect.Collections2
-import kr.blogspot.crowjdh.inspirationgen.models.*
+import kr.blogspot.crowjdh.inspirationgen.music.models.*
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

@@ -1,4 +1,4 @@
-package kr.blogspot.crowjdh.inspirationgen.models
+package kr.blogspot.crowjdh.inspirationgen.music.models
 
 import java.util.*
 
