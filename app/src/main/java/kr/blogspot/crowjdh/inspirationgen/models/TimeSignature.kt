@@ -9,6 +9,5 @@ package kr.blogspot.crowjdh.inspirationgen.models
 
 class TimeSignature(val count: Int, val noteLength: NoteLength, val tpqn: Int) {
     fun capableTicks() = noteLength.ticks(tpqn) * count
-    // TODO: Perform test
     fun canContainTickType(tickType: TickType) = tickType.ticks(this) <= capableTicks()
 }

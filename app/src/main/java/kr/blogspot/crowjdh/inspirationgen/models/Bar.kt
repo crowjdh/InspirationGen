@@ -31,10 +31,13 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
 
     fun removeNotableAt(index: Int) = notables.removeAt(index)
 
-    fun addNotable(notable: Notable) {
-        if (canAddNotable(notable)) {
+    // TODO: Consider throwing exception when can't add notable
+    fun addNotable(notable: Notable): Boolean {
+        val canAddNotable = canAddNotable(notable)
+        if (canAddNotable) {
             notables.add(notable)
         }
+        return canAddNotable
     }
 
     override fun ticks(timeSignature: TimeSignature): Int =
@@ -42,7 +45,6 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
                     .fold(0) { prev, cur -> prev + cur }
 
     private fun canAddNotable(notable: Notable): Boolean {
-        // TODO: Perform test
         val targetTicks = ticks(timeSignature) + notable.length.ticks(timeSignature.tpqn)
 
         return targetTicks <= timeSignature.capableTicks()

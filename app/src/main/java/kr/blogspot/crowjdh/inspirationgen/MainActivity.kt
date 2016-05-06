@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import kr.blogspot.crowjdh.inspirationgen.extensions.MidiFile
 import kr.blogspot.crowjdh.inspirationgen.extensions.pauseIfPlaying
 import kr.blogspot.crowjdh.inspirationgen.extensions.startIfNotPlaying
-import kr.blogspot.crowjdh.inspirationgen.models.*
 import kr.blogspot.crowjdh.midisupport.MidiFile
 import kr.blogspot.crowjdh.midisupport.MidiTrack
 import kr.blogspot.crowjdh.midisupport.event.meta.Tempo
@@ -27,31 +26,6 @@ class MainActivity : AppCompatActivity() {
 //        copyRawResourceIntoFile(R.raw.whistle_concert, cacheFile)
         createTempMidiFile().writeToFile(cacheFile)
         prepareMediaPlayer(cacheFile)
-
-        testBar()
-    }
-
-    private fun testBar() {
-        val bar = Bar()
-        val barTwo = Bar(DEFAULT_TIME_SIGNATURE)
-        //        val sheet = Sheet()
-        //        sheet.addBar(bar)
-        //
-        for (i: Int in 40..50) {
-            val noteLength = when(i % 3) {
-                0 -> NoteLength.QUARTER
-                else -> NoteLength.EIGHTH
-            }
-            val notable = when(i % 2) {
-                0 -> Note(noteLength, i)
-                else -> Rest(noteLength)
-            }
-            bar.addNotable(notable)
-        }
-
-        bar.timeSignature = kr.blogspot.crowjdh.inspirationgen.models.TimeSignature(5, NoteLength.QUARTER, 480)
-        bar.timeSignature = kr.blogspot.crowjdh.inspirationgen.models.TimeSignature(3, NoteLength.QUARTER, 480)
-        bar.timeSignature = kr.blogspot.crowjdh.inspirationgen.models.TimeSignature(4, NoteLength.QUARTER, 480)
     }
 
     override fun onResume() {
