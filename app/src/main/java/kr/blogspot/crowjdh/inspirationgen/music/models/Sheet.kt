@@ -16,5 +16,7 @@ class Sheet() {
 
     fun addBar(bar: Bar) = _bars.add(bar)
 
+    fun addBars(bars: List<Bar>) = _bars.addAll(bars)
+
     fun removeBarAt(index: Int) = _bars.removeAt(index)
 }

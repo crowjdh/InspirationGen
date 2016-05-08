@@ -61,13 +61,16 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
 
         fun generate(builder: Options.() -> Unit) = generate(Options.create(builder))
 
-        // TODO: Use length option to generate more than one bar
-        fun generate(options: Options): Bar {
-            val bar = Bar(options.timeSignature)
-            bar.fillWithGeneratedNotables(options)
-            bar.fillEmptyTicksWithRests()
+        fun generate(options: Options): List<Bar> {
+            val bars = mutableListOf<Bar>()
+            for (i in 1..options.barCount) {
+                val bar = Bar(options.timeSignature)
+                bar.fillWithGeneratedNotables(options)
+                bar.fillEmptyTicksWithRests()
+                bars.add(bar)
+            }
 
-            return bar
+            return bars
         }
 
         private fun Bar.fillWithGeneratedNotables(options: Options) {
@@ -104,7 +107,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
         class Options(var timeSignature: TimeSignature = TimeSignature.default,
                       var pitchRange: IntRange = 60..72,
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
-                      var length: Int = 1,
+                      var barCount: Int = 1,
                       var fixedSeed: Long? = null) {
 
             val seed: Long
@@ -114,6 +117,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
                 fun create(build: Options.() -> Unit): Options {
                     val options = Options()
                     options.build()
+                    // TODO: Validate parameters
                     return options
                 }
             }

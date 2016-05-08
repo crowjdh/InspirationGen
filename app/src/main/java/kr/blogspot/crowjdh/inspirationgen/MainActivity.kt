@@ -42,8 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun generateRandomSheet(cacheFile: File) {
         val sheet = Sheet()
-        sheet.addBar(Bar.generate { })
-        sheet.addBar(Bar.generate { })
+        sheet.addBars(Bar.generate { barCount = 2 })
         sheet.toMidiFile(120f).writeToFile(cacheFile)
     }
 
