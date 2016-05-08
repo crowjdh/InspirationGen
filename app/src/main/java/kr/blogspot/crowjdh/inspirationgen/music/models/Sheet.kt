@@ -8,6 +8,7 @@ import java.util.*
  * Sheet
  */
 
+const val DEFAULT_TPQN = 480
 class Sheet() {
     private var _bars: ArrayList<Bar> = arrayListOf()
     val bars: ArrayList<Bar>

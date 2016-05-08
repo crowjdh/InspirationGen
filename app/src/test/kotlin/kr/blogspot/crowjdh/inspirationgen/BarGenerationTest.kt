@@ -26,16 +26,16 @@ class BarGenerationTest {
                     }
                 }
                 val noteLengthsToFill =
-                        NoteLength.fromTPQNAndTicks(bar.timeSignature.tpqn, bar.ticksLeft)
+                        NoteLength.fromTicks(bar.ticksLeft)
                 if (noteLengthsToFill != null) {
                     val ticksOfNoteLengthsToFill = noteLengthsToFill
-                            .map { it.ticks(bar.timeSignature.tpqn) }
+                            .map { it.ticks() }
                             .reduce { prev, cur -> prev + cur }
                     assertEquals(ticksOfNoteLengthsToFill, bar.ticksLeft,
-                            "bar.ticksLeft: ${bar.ticksLeft}, tpqn: ${bar.timeSignature.tpqn}, " +
+                            "bar.ticksLeft: ${bar.ticksLeft}, " +
                                     "ticksOfNoteLengthsToFill: $ticksOfNoteLengthsToFill")
                 } else {
-                    assertEquals(bar.timeSignature.capableTicks(), bar.ticks())
+                    assertEquals(bar.timeSignature.capableTicks(), bar.ticks)
                 }
             }
         }
@@ -46,7 +46,7 @@ class BarGenerationTest {
         for (i in 0..100) {
             val bar = Bar.generate { fixedSeed = i.toLong() }
 
-            assertEquals(bar.ticksLeft, 0, "bar.ticks(): ${bar.ticks()}, " +
+            assertEquals(bar.ticksLeft, 0, "bar.ticks(): ${bar.ticks}, " +
                     "bar.ticksLeft: ${bar.ticksLeft}")
         }
     }

@@ -14,11 +14,11 @@ enum class NoteLength(val length: Int) {
     EIGHTH(8),
     SIXTEENTH(16);
 
-    fun ticks(tpqn: Int) = (tpqn * (QUARTER.length.toFloat() / length.toFloat())).toLong()
+    fun ticks() = (DEFAULT_TPQN * (QUARTER.length.toFloat() / length.toFloat())).toLong()
 
     companion object Factory {
 
-        fun fromTPQNAndTicks(tpqn: Int, ticksToFill: Long): List<NoteLength>? {
+        fun fromTicks(ticksToFill: Long): List<NoteLength>? {
             if (ticksToFill == 0L) {
                 return null
             }
@@ -29,11 +29,10 @@ enum class NoteLength(val length: Int) {
                 // ticks = tpqn * (QUARTER.length / length)
                 // QUARTER.length / length = ticks / tpqn
                 // length = QUARTER.length / (ticks / tpqn) = QUARTER.length * (tpqn / ticks)
-                val noteLength =
-                        fromLength(QUARTER.length * tpqn.toFloat() / leftTicksToFill.toFloat())
-                        ?: break
+                val length = QUARTER.length * DEFAULT_TPQN.toFloat() / leftTicksToFill.toFloat()
+                val noteLength = fromLength(length) ?: break
                 noteLengths.add(noteLength)
-                leftTicksToFill -= noteLength.ticks(tpqn)
+                leftTicksToFill -= noteLength.ticks()
             } while(leftTicksToFill > 0)
             return noteLengths
         }

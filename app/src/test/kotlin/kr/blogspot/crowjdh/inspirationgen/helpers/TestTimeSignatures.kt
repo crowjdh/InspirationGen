@@ -14,19 +14,17 @@ class TestTimeSignatures {
 
     companion object Generator {
 
-        fun forEachTimeSignatureParams(block: (count: Int, noteLength: NoteLength, tpqn: Int) -> Unit) {
+        fun forEachTimeSignatureParams(block: (count: Int, noteLength: NoteLength) -> Unit) {
             for (count in 1..12) {
                 for (noteLength in NoteLength.values()) {
-                    for (tpqn in listOf(24, 48, 96, 240, 480, 960)) {
-                        block(count, noteLength, tpqn)
-                    }
+                    block(count, noteLength)
                 }
             }
         }
 
         fun forEachTimeSignature(block: (timeSignature: TimeSignature) -> Unit) {
-            forEachTimeSignatureParams { count, noteLength, tpqn ->
-                block(TimeSignature(count, noteLength, tpqn))
+            forEachTimeSignatureParams { count, noteLength ->
+                block(TimeSignature(count, noteLength))
             }
         }
     }

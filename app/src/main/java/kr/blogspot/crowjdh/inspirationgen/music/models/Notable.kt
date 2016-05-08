@@ -11,5 +11,6 @@ interface Notable: TickType {
 
     val length: NoteLength
 
-    override fun ticks(timeSignature: TimeSignature) = length.ticks(timeSignature.tpqn).toLong()
+    override val ticks: Long
+        get() = length.ticks().toLong()
 }

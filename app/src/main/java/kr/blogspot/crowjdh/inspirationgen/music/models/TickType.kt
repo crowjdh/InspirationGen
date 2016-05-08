@@ -7,5 +7,5 @@ package kr.blogspot.crowjdh.inspirationgen.music.models
  *  A type that provides how many ticks it can provide for a time signature.
  */
 interface TickType {
-    fun ticks(timeSignature: TimeSignature): Long
+    val ticks: Long
 }

@@ -22,7 +22,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
         get() = _notables
 
     val ticksLeft: Long
-        get() = this.timeSignature.capableTicks() - ticks()
+        get() = this.timeSignature.capableTicks() - ticks
 
     private var _notables: ArrayList<Notable> = arrayListOf()
     private var _timeSignature: TimeSignature? = null
@@ -48,13 +48,11 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
         }
     }
 
-    fun ticks() = ticks(this.timeSignature)
-
-    override fun ticks(timeSignature: TimeSignature) =
-            notables.map { it.ticks(timeSignature) }.fold(0L) { prev, cur -> prev + cur }
+    override val ticks: Long
+        get() = notables.map { it.ticks }.fold(0L) { prev, cur -> prev + cur }
 
     private fun canAddNotable(notable: Notable): Boolean {
-        val targetTicks = ticks() + notable.length.ticks(timeSignature.tpqn)
+        val targetTicks = ticks + notable.length.ticks()
 
         return targetTicks <= timeSignature.capableTicks()
     }
@@ -66,7 +64,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
         fun generate(options: Options): Bar {
             val bar = Bar(options.timeSignature)
             bar.fillWithGeneratedNotables(options)
-            bar.fillEmptyTicksWithRests(options)
+            bar.fillEmptyTicksWithRests()
 
             return bar
         }
@@ -79,8 +77,8 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
             } while(addNotableSuccessful && ++trialCount <= 50)
         }
 
-        private fun Bar.fillEmptyTicksWithRests(options: Options) {
-            val noteLengths = NoteLength.fromTPQNAndTicks(options.timeSignature.tpqn, this.ticksLeft)
+        private fun Bar.fillEmptyTicksWithRests() {
+            val noteLengths = NoteLength.fromTicks(this.ticksLeft)
             if (noteLengths != null) {
                 for (noteLength in noteLengths) {
                     this.addNotableIgnoringResult(Rest(noteLength))
@@ -125,7 +123,8 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
                     = Random(seed).nextInt(range.count()) + range.start
         }
 
-        data class NoteLengthRange private constructor(val items: List<NoteLength>): Iterable<NoteLength> {
+        data class NoteLengthRange
+        private constructor(val items: List<NoteLength>): Iterable<NoteLength> {
 
             val size: Int
                 get() = items.size

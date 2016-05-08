@@ -13,8 +13,10 @@ import kr.blogspot.crowjdh.midisupport.event.meta.Tempo
  * MidiSupportAdaptiveExtension
  */
 
-private val MIDI_DEFAULT_METER = kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature.DEFAULT_METER
-private val MIDI_DEFAULT_DIVISION = kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature.DEFAULT_DIVISION
+private val MIDI_DEFAULT_METER
+        = kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature.DEFAULT_METER
+private val MIDI_DEFAULT_DIVISION
+        = kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature.DEFAULT_DIVISION
 
 fun TimeSignature.toMidiTimeSignature(): kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature {
     val midiTimeSignature = kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature()
@@ -45,7 +47,7 @@ fun Bar.toEachMidiEvents(startTicks: Long = 0L, block: (event: MidiEvent, ticks:
     block(timeSignature.toMidiTimeSignature(), 0L)
     var accumulatedTicks = 0L
     notables.forEach {
-        it.toMidiOnOffNotes(startTicks + accumulatedTicks, timeSignature) { on, off ->
+        it.toMidiOnOffNotes(startTicks + accumulatedTicks) { on, off ->
             val ticks = off.tick - on.tick
             block(on, ticks)
             block(off, 0L)
@@ -54,9 +56,9 @@ fun Bar.toEachMidiEvents(startTicks: Long = 0L, block: (event: MidiEvent, ticks:
     }
 }
 
-fun Notable.toMidiOnOffNotes(startTicks: Long, timeSignature: TimeSignature,
+fun Notable.toMidiOnOffNotes(startTicks: Long,
                              block: (event: NoteOn, event: NoteOff) -> Unit) {
-    val endTicks = startTicks + ticks(timeSignature)
+    val endTicks = startTicks + ticks
     val pitch = if (this is Note) pitch else 0
     block(NoteOn(startTicks, 0, pitch, 100), NoteOff(endTicks, 0, pitch, 0))
 }
