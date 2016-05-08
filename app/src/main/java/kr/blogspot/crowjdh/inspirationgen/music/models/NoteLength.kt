@@ -37,11 +37,7 @@ enum class NoteLength(val length: Int) {
             return noteLengths
         }
 
-        fun fromLength(length: Float): NoteLength? {
-            return values().filterOrNull {
-                it.length >= length
-            }?.get(0)
-        }
+        fun fromLength(length: Float)= values().filterOrNull { it.length >= length }?.get(0)
 
         inline fun <T> Array<out T>.filterOrNull(predicate: (T) -> Boolean): List<T>? {
             val filtered = filter(predicate)
