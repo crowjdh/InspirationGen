@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // TODO: Create UI and move below into action(Consider RxBinding)
         val cacheFile = createCacheFile()
         generateRandomSheet(cacheFile)
         prepareMediaPlayer(cacheFile)

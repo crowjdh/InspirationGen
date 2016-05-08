@@ -61,6 +61,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
 
         fun generate(builder: Options.() -> Unit) = generate(Options.create(builder))
 
+        // TODO: Use length option to generate more than one bar
         fun generate(options: Options): Bar {
             val bar = Bar(options.timeSignature)
             bar.fillWithGeneratedNotables(options)
@@ -86,6 +87,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
             }
         }
 
+        // TODO: Increase randomness
         private fun generateNotable(options: Options): Notable {
             val notableIdx = options.randomIntBelow(2)
             val noteLength = options.noteLengthRange.elementAt(
