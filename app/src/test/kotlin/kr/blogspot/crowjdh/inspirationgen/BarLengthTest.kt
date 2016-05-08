@@ -3,7 +3,6 @@ package kr.blogspot.crowjdh.inspirationgen
 import kr.blogspot.crowjdh.inspirationgen.helpers.TestNotables
 import kr.blogspot.crowjdh.inspirationgen.helpers.TestTimeSignatures
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
-import kr.blogspot.crowjdh.inspirationgen.music.models.DEFAULT_TIME_SIGNATURE
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.TimeSignature
 import org.junit.Test
@@ -32,8 +31,8 @@ class BarLengthTest {
             for (notable in notables) {
                 bar.addNotableIgnoringResult(notable)
             }
-            val barTicks = bar.ticks(DEFAULT_TIME_SIGNATURE)
-            val capability = DEFAULT_TIME_SIGNATURE.capableTicks()
+            val barTicks = bar.ticks(TimeSignature.default)
+            val capability = TimeSignature.default.capableTicks()
             assertTrue(barTicks <= capability)
         }
     }
@@ -57,9 +56,9 @@ class BarLengthTest {
     }
 
     private fun assertCapableTicksForTimeSignature(count: Int, noteLength: NoteLength, tpqn: Int) {
-        fun ticks(count: Int, noteLength: NoteLength, tpqn: Int): Int {
+        fun ticks(count: Int, noteLength: NoteLength, tpqn: Int): Long {
             val tickPerLength = tpqn * (NoteLength.QUARTER.length.toFloat() / noteLength.length.toFloat())
-            return count * tickPerLength.toInt()
+            return count * tickPerLength.toLong()
         }
         assertEquals(TimeSignature(count, noteLength, tpqn).capableTicks(),
                 ticks(count, noteLength, tpqn))

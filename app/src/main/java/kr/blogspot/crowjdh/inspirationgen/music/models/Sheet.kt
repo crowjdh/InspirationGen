@@ -8,11 +8,12 @@ import java.util.*
  * Sheet
  */
 
-val DEFAULT_TIME_SIGNATURE = TimeSignature(4, NoteLength.QUARTER, 480)
-class Sheet(var timeSignature: TimeSignature = DEFAULT_TIME_SIGNATURE) {
-    private var bars: ArrayList<Bar> = arrayListOf()
+class Sheet() {
+    private var _bars: ArrayList<Bar> = arrayListOf()
+    val bars: ArrayList<Bar>
+        get() = _bars
 
-    fun addBar(bar: Bar) = bars.add(bar)
+    fun addBar(bar: Bar) = _bars.add(bar)
 
-    fun removeBarAt(index: Int) = bars.removeAt(index)
+    fun removeBarAt(index: Int) = _bars.removeAt(index)
 }

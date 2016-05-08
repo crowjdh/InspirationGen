@@ -14,12 +14,12 @@ enum class NoteLength(val length: Int) {
     EIGHTH(8),
     SIXTEENTH(16);
 
-    fun ticks(tpqn: Int) = (tpqn * (QUARTER.length.toFloat() / length.toFloat())).toInt()
+    fun ticks(tpqn: Int) = (tpqn * (QUARTER.length.toFloat() / length.toFloat())).toLong()
 
     companion object Factory {
 
-        fun fromTPQNAndTicks(tpqn: Int, ticksToFill: Int): List<NoteLength>? {
-            if (ticksToFill == 0) {
+        fun fromTPQNAndTicks(tpqn: Int, ticksToFill: Long): List<NoteLength>? {
+            if (ticksToFill == 0L) {
                 return null
             }
 

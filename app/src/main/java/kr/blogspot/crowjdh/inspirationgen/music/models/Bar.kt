@@ -11,7 +11,7 @@ import java.util.*
 class Bar(timeSignature: TimeSignature? = null): TickType {
     var timeSignature: TimeSignature
         get() {
-            return _timeSignature ?: DEFAULT_TIME_SIGNATURE
+            return _timeSignature ?: TimeSignature.default
         }
         set(value) {
             if (value.canContainTickType(this)) {
@@ -21,7 +21,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
     val notables: ArrayList<Notable>
         get() = _notables
 
-    val ticksLeft: Int
+    val ticksLeft: Long
         get() = this.timeSignature.capableTicks() - ticks()
 
     private var _notables: ArrayList<Notable> = arrayListOf()
@@ -51,7 +51,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
     fun ticks() = ticks(this.timeSignature)
 
     override fun ticks(timeSignature: TimeSignature) =
-            notables.map { it.ticks(timeSignature) }.fold(0) { prev, cur -> prev + cur }
+            notables.map { it.ticks(timeSignature) }.fold(0L) { prev, cur -> prev + cur }
 
     private fun canAddNotable(notable: Notable): Boolean {
         val targetTicks = ticks() + notable.length.ticks(timeSignature.tpqn)
@@ -101,7 +101,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
             return notable
         }
 
-        class Options(var timeSignature: TimeSignature = DEFAULT_TIME_SIGNATURE,
+        class Options(var timeSignature: TimeSignature = TimeSignature.default,
                       var pitchRange: IntRange = 60..72,
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var length: Int = 1,
