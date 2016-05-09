@@ -20,8 +20,5 @@ import java.io.Closeable
  *          }
  */
 
-inline fun <T: Closeable, R> T.use(block: T.() -> R): R {
-    use { closable ->
-        return closable.block()
-    }
-}
+inline fun <T: Closeable, R> T.use(block: T.() -> R): R
+        = use { closable -> return closable.block() }

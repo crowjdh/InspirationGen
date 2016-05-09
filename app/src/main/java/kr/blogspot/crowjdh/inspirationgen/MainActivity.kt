@@ -1,16 +1,15 @@
 package kr.blogspot.crowjdh.inspirationgen
 
+//import kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.support.annotation.RawRes
 import android.support.v7.app.AppCompatActivity
-import kr.blogspot.crowjdh.inspirationgen.extensions.MidiFile
 import kr.blogspot.crowjdh.inspirationgen.extensions.pauseIfPlaying
 import kr.blogspot.crowjdh.inspirationgen.extensions.startIfNotPlaying
-import kr.blogspot.crowjdh.midisupport.MidiFile
-import kr.blogspot.crowjdh.midisupport.MidiTrack
-import kr.blogspot.crowjdh.midisupport.event.meta.Tempo
-import kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature
+import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
+import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
+import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
+import kr.blogspot.crowjdh.inspirationgen.music.models.toMidiFile
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -22,9 +21,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // TODO: Create UI and move below into action(Consider RxBinding)
         val cacheFile = createCacheFile()
-//        copyRawResourceIntoFile(R.raw.whistle_concert, cacheFile)
-        createTempMidiFile().writeToFile(cacheFile)
+        generateRandomSheet(cacheFile)
         prepareMediaPlayer(cacheFile)
     }
 
@@ -42,11 +41,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun createCacheFile(): File = File(cacheDir, "temp.mid")
 
-    private fun copyRawResourceIntoFile(@RawRes id: Int, file: File) {
-        val midiFile = MidiFile(resources, id)
-//        midiFile.resolution = 90
-//        midiFile.removeTracks(1..3)
-        midiFile.writeToFile(file)
+    private fun generateRandomSheet(cacheFile: File) {
+        val sheet = Sheet()
+        sheet.addBars(Bar.generate {
+            barCount = 2
+            noteOverRestBias = .8f
+            noteLengthRange = Bar.Generator.NoteLengthRange.create(
+                    Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
+        })
+        sheet.toMidiFile(120f).writeToFile(cacheFile)
     }
 
     private fun prepareMediaPlayer(file: File) {
@@ -61,25 +64,5 @@ class MainActivity : AppCompatActivity() {
 
     private fun pauseMediaPlayer() {
         mPlayer.pauseIfPlaying()
-    }
-
-    private fun createTempMidiFile(): MidiFile {
-        val tempoTrack = MidiTrack()
-        val noteTrack = MidiTrack()
-
-        val timeSignature = TimeSignature()
-        timeSignature.setTimeSignature(4, 4, TimeSignature.DEFAULT_METER, TimeSignature.DEFAULT_DIVISION)
-
-        val tempo = Tempo()
-        tempo.bpm = 120f
-
-        tempoTrack.insertEvent(timeSignature)
-        tempoTrack.insertEvent(tempo)
-
-        for (idx in 0..24) {
-            noteTrack.insertNote(0, idx + 44, 100, idx * 480L, 480L)
-        }
-
-        return MidiFile(MidiFile.DEFAULT_RESOLUTION, arrayListOf(tempoTrack, noteTrack))
     }
 }
