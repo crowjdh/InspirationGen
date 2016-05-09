@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import kr.blogspot.crowjdh.inspirationgen.extensions.pauseIfPlaying
 import kr.blogspot.crowjdh.inspirationgen.extensions.startIfNotPlaying
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
+import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.music.models.toMidiFile
 import java.io.File
@@ -42,7 +43,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun generateRandomSheet(cacheFile: File) {
         val sheet = Sheet()
-        sheet.addBars(Bar.generate { barCount = 2 })
+        sheet.addBars(Bar.generate {
+            barCount = 2
+            noteOverRestBias = .8f
+            noteLengthRange = Bar.Generator.NoteLengthRange.create(
+                    Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
+        })
         sheet.toMidiFile(120f).writeToFile(cacheFile)
     }
 

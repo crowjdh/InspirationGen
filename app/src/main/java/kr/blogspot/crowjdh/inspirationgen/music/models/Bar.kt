@@ -1,5 +1,6 @@
 package kr.blogspot.crowjdh.inspirationgen.music.models
 
+import kr.blogspot.crowjdh.inspirationgen.extensions.pickFromMap
 import java.util.*
 
 /**
@@ -90,47 +91,60 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
             }
         }
 
-        // TODO: Increase randomness
         private fun generateNotable(options: Options): Notable {
-            val notableIdx = options.randomIntBelow(2)
-            val noteLength = options.noteLengthRange.elementAt(
-                    options.randomIntBelow(options.noteLengthRange.size))
-            val pitch = options.randomIntInRange(options.pitchRange)
+            val noteLength = generateRandomNoteLength(options)
 
-            val notable = when (notableIdx) {
-                0 -> Note(noteLength, pitch)
-                else -> Rest(noteLength)
+            return if (shouldGenerateNote(options)) {
+                Note(noteLength, generateRandomPitch(options))
+            } else {
+                Rest(noteLength)
             }
-            return notable
         }
+
+        private fun shouldGenerateNote(options: Options)
+                = options.randomIntBelow(100) < (100f * options.noteOverRestBias).toInt()
+
+        private fun generateRandomNoteLength(options: Options): NoteLength
+                = Random(options.seed).pickFromMap(options.noteLengthRange.items)
+
+        private fun generateRandomPitch(options: Options)
+                = options.randomIntInRange(options.pitchRange)
+
+        private fun Options.randomIntBelow(n: Int)
+                = Random(seed).nextInt(n)
+
+        private fun Options.randomIntInRange(range: IntRange)
+                = Random(seed).nextInt(range.count()) + range.start
 
         class Options(var timeSignature: TimeSignature = TimeSignature.default,
                       var pitchRange: IntRange = 60..72,
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var barCount: Int = 1,
+                      var noteOverRestBias: Float = .5f,
                       var fixedSeed: Long? = null) {
 
             val seed: Long
-                get() = fixedSeed ?: System.currentTimeMillis()
+                get() = fixedSeed ?: System.nanoTime()
+
+            fun validateOrThrow() {
+                assert(barCount > 0) { "options.barCount MUST BE > 0" }
+                assert(noteOverRestBias.compareTo(0f) > 0 && noteOverRestBias.compareTo(1f) < 0) {
+                    "options.noteOverRestBias MUST BE > 0"
+                }
+            }
 
             companion object Factory {
                 fun create(build: Options.() -> Unit): Options {
                     val options = Options()
                     options.build()
-                    // TODO: Validate parameters
+                    options.validateOrThrow()
                     return options
                 }
             }
-
-            fun randomIntBelow(n: Int)
-                    = Random(seed).nextInt(n)
-
-            fun randomIntInRange(range: IntRange)
-                    = Random(seed).nextInt(range.count()) + range.start
         }
 
         data class NoteLengthRange
-        private constructor(val items: List<NoteLength>): Iterable<NoteLength> {
+        private constructor(val items: Map<NoteLength, Int?>): Iterable<Map.Entry<NoteLength, Int?>> {
 
             val size: Int
                 get() = items.size
@@ -138,8 +152,14 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
             override fun iterator() = items.iterator()
 
             companion object Factory {
+
                 fun createDefault() = create(NoteLength.QUARTER, NoteLength.EIGHTH)
-                fun create(vararg items: NoteLength) = NoteLengthRange(items.toList().distinct())
+
+                fun create(vararg items: NoteLength)
+                        = NoteLengthRange(items.map { Pair(it, null) }.toMap())
+
+                fun create(vararg items: Pair<NoteLength, Int?>)
+                        = NoteLengthRange(items.distinctBy { it.first }.toMap())
             }
         }
     }

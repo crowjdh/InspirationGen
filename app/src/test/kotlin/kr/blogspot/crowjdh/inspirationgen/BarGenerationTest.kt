@@ -3,6 +3,7 @@ package kr.blogspot.crowjdh.inspirationgen
 import kr.blogspot.crowjdh.inspirationgen.extensions.increaseOrPut
 import kr.blogspot.crowjdh.inspirationgen.helpers.TestNotables
 import kr.blogspot.crowjdh.inspirationgen.helpers.TestTimeSignatures
+import kr.blogspot.crowjdh.inspirationgen.helpers.printSection
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.Note
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
@@ -71,7 +72,12 @@ class BarGenerationTest {
         var lengthMap = mutableMapOf<NoteLength, Int>()
 
         // Generate random bars and collect information
-        Bar.generate { this.barCount = barCount }.flatMap { it.notables }.forEach {
+        Bar.generate {
+            this.barCount = barCount
+            this.noteOverRestBias = .8f
+            this.noteLengthRange = Bar.Generator.NoteLengthRange.create(
+                    Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
+        }.flatMap { it.notables }.forEach {
             if (it is Note) {
                 noteCount++
                 pitchMap.increaseOrPut(it.pitch, { 0 })
@@ -88,8 +94,8 @@ class BarGenerationTest {
         // Print Notes vs Rests
         val notePercentage = (noteCount.toFloat() / notableCount.toFloat()) * 100
         printSection("Note vs Rest")
-        println("Note: $notePercentage%")
-        println("Rest: ${(100 - notePercentage)}%")
+        println("Note: $notePercentage% ($noteCount)")
+        println("Rest: ${(100 - notePercentage)}% ($restCount)")
 
         // Print pitch statistics
         printSection("Pitch")
@@ -100,12 +106,5 @@ class BarGenerationTest {
         lengthMap.toSortedMap(Comparator { prev, cur -> prev.ordinal - cur.ordinal }).forEach {
             println("${it.key} length notes: ${100 * it.value.toFloat() / notableCount.toFloat()}% (${it.value})")
         }
-    }
-
-    private fun printSection(title: String, preBreakLineCount: Int = 2) {
-        val preBreakLines = "\n".repeat(preBreakLineCount)
-        val delimiter = "/".repeat(((80 - title.length) / 2) - 1)
-
-        println("$preBreakLines$delimiter $title $delimiter")
     }
 }
