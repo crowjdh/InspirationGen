@@ -11,7 +11,6 @@ import java.util.*
 fun <T> Random.pickFromMap(keyToWeightMap: Map<T, Int?>): T {
     fun Int?.orOne() = this ?: 1
     val denominator = keyToWeightMap.map { it.value.orOne() }.reduce { prev, cur -> prev + cur }
-
     val randomInt = nextInt(denominator)
 
     var accumulated = 0

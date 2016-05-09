@@ -6,5 +6,5 @@ package kr.blogspot.crowjdh.inspirationgen.extensions
  * MutableMapExtensions
  */
 
-inline fun <K> MutableMap<K, Int>.increaseOrPut(key: K, defaultValue: () -> Int): Unit
+inline fun <K> MutableMap<K, Int>.increaseOrPut(key: K, defaultValue: () -> Int)
         = set(key, getOrPut(key, defaultValue) + 1)
