@@ -12,7 +12,9 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
 
-class MainActivity : AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener {
+class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener {
+
+    private val midiPlayerFragmentTag = "midiPlayerFragmentTag"
 
     private val mainFragment: MainFragment
         get() = supportFragmentManager.findFragmentById(R.id.mainFragment) as MainFragment
@@ -31,7 +33,8 @@ class MainActivity : AppCompatActivity(), SheetHistoryAdapter.OnItemClickListene
     }
 
     private fun initMidiPlayFragment() {
-        supportFragmentManager.beginTransaction().add(midiPlayFragment, "").commit()
+        supportFragmentManager.beginTransaction()
+                .add(midiPlayFragment, midiPlayerFragmentTag).commit()
     }
 
     private fun initActions() {

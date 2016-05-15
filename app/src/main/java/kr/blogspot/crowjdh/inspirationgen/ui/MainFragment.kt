@@ -15,7 +15,7 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
 import kotlin.properties.Delegates
 
-class MainFragment : Fragment() {
+class MainFragment: Fragment() {
 
     private val mSheetHistoryRecyclerView: RecyclerView by bindView(R.id.sheet_history)
     private var mLayoutManager: LinearLayoutManager by Delegates.notNull()
