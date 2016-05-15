@@ -13,10 +13,12 @@ import butterknife.bindView
 import kr.blogspot.crowjdh.inspirationgen.R
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
+import kotlin.properties.Delegates
 
 class MainFragment : Fragment() {
 
     private val mSheetHistoryRecyclerView: RecyclerView by bindView(R.id.sheet_history)
+    private var mLayoutManager: LinearLayoutManager by Delegates.notNull()
     private var mAdapter = SheetHistoryAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,16 +39,17 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mSheetHistoryRecyclerView.layoutManager = LinearLayoutManager(context)
+        mLayoutManager = LinearLayoutManager(context)
+        mSheetHistoryRecyclerView.layoutManager = mLayoutManager
         mSheetHistoryRecyclerView.adapter = mAdapter
     }
 
     fun addSheet(sheet: Sheet) {
-        // TODO: Scroll to top
         mAdapter.prependSheet(sheet)
         mAdapter.notifyItemInserted(0)
         if (mAdapter.itemCount > 1) {
             mAdapter.notifyItemRangeChanged(1, mAdapter.itemCount - 1)
         }
+        mLayoutManager.scrollToPositionWithOffset(0, 0)
     }
 }

@@ -29,5 +29,5 @@
         android:layout_toRightOf="@id/number"
         android:layout_toStartOf="@id/play"
         android:layout_toLeftOf="@id/play"
-        android:gravity="center"/>
+        android:gravity="center|start"/>
 </RelativeLayout>
