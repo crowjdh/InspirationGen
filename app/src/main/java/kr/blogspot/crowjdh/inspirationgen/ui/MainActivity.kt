@@ -1,4 +1,4 @@
-package kr.blogspot.crowjdh.inspirationgen
+package kr.blogspot.crowjdh.inspirationgen.ui
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import butterknife.bindView
 import com.jakewharton.rxbinding.view.clicks
+import kr.blogspot.crowjdh.inspirationgen.R
 import kr.blogspot.crowjdh.inspirationgen.extensions.pauseIfPlaying
 import kr.blogspot.crowjdh.inspirationgen.extensions.stopIfPlaying
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
