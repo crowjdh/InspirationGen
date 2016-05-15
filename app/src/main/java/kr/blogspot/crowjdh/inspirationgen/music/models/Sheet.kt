@@ -1,5 +1,6 @@
 package kr.blogspot.crowjdh.inspirationgen.music.models
 
+import kr.blogspot.crowjdh.inspirationgen.helpers.generateRandomName
 import java.util.*
 
 /**
@@ -10,7 +11,9 @@ import java.util.*
 
 const val DEFAULT_TPQN = 480
 class Sheet() {
+
     private var _bars: ArrayList<Bar> = arrayListOf()
+    var name: String = generateRandomName()
     val bars: ArrayList<Bar>
         get() = _bars
 
