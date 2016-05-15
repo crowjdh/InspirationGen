@@ -1,0 +1,45 @@
+package kr.blogspot.crowjdh.inspirationgen.ui
+
+
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import butterknife.bindView
+import kr.blogspot.crowjdh.inspirationgen.R
+import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
+import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
+
+class MainFragment : Fragment() {
+
+    private val mSheetHistoryRecyclerView: RecyclerView by bindView(R.id.sheet_history)
+    private val mAdapter = SheetHistoryAdapter()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        return inflater!!.inflate(R.layout.fragment_main, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        mSheetHistoryRecyclerView.layoutManager = LinearLayoutManager(context)
+        mSheetHistoryRecyclerView.adapter = mAdapter
+    }
+
+    fun addSheet(sheet: Sheet) {
+        mAdapter.prependSheet(sheet)
+        mAdapter.notifyItemInserted(0)
+        if (mAdapter.itemCount > 1) {
+            mAdapter.notifyItemRangeChanged(1, mAdapter.itemCount - 1)
+        }
+    }
+
+}

@@ -13,6 +13,7 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.music.models.toMidiFile
+import kr.blogspot.crowjdh.inspirationgen.ui.MainFragment
 import java.io.File
 import kotlin.properties.Delegates
 
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener {
 
             val sheet = generateRandomSheet()
             sheet.toMidiFile(120f).writeToFile(mCacheFile)
+            mainFragment.addSheet(sheet)
 
             playMediaPlayerWithFile(mCacheFile)
         }
@@ -77,6 +79,9 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener {
 
         return sheet
     }
+
+    private val mainFragment: MainFragment
+        get() = supportFragmentManager.findFragmentById(R.id.mainFragment) as MainFragment
 
     override fun onPrepared(mp: MediaPlayer?) {
         mp?.start()
