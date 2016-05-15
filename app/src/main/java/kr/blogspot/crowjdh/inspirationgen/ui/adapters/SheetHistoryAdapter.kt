@@ -28,7 +28,7 @@ class SheetHistoryAdapter(sheets: MutableList<Sheet> = mutableListOf()):
 
     override fun onBindViewHolder(holder: SheetHistoryViewHolder?, position: Int) {
         holder!!.numberView.text = position.toString()
-        holder.contentView.text = mSheets[position].toString()
+        holder.contentView.text = mSheets[position].name
     }
 
     override fun getItemCount() = mSheets.count()

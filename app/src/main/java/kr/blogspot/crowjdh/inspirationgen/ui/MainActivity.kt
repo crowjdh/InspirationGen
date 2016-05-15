@@ -14,7 +14,6 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.music.models.toMidiFile
-import kr.blogspot.crowjdh.inspirationgen.ui.MainFragment
 import java.io.File
 import kotlin.properties.Delegates
 
