@@ -14,10 +14,12 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.music.models.toMidiFile
+import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
 import java.io.File
 import kotlin.properties.Delegates
 
-class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener {
+class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener,
+        SheetHistoryAdapter.OnItemClickListener {
 
     private var mCacheFile: File by Delegates.notNull()
 
@@ -46,14 +48,20 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener {
 
     private fun initActions() {
         mGenerateFab.clicks().subscribe {
-            mPlayer.stopIfPlaying()
-
             val sheet = generateRandomSheet()
-            sheet.toMidiFile(120f).writeToFile(mCacheFile)
             mainFragment.addSheet(sheet)
 
-            playMediaPlayerWithFile(mCacheFile)
+            // TODO: Move MidiPlayer into dedicated Fragment
+            playSheet(sheet)
         }
+    }
+
+    private fun playSheet(sheet: Sheet) {
+        mPlayer.stopIfPlaying()
+
+        sheet.toMidiFile(120f).writeToFile(mCacheFile)
+
+        playMediaPlayerWithFile(mCacheFile)
     }
 
     private fun playMediaPlayerWithFile(file: File) {
@@ -85,5 +93,9 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener {
 
     override fun onPrepared(mp: MediaPlayer?) {
         mp?.start()
+    }
+
+    override fun onItemClick(index: Int, item: Sheet) {
+        playSheet(item)
     }
 }

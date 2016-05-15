@@ -1,6 +1,7 @@
 package kr.blogspot.crowjdh.inspirationgen.ui
 
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -16,10 +17,16 @@ import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
 class MainFragment : Fragment() {
 
     private val mSheetHistoryRecyclerView: RecyclerView by bindView(R.id.sheet_history)
-    private val mAdapter = SheetHistoryAdapter()
+    private var mAdapter = SheetHistoryAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+
+        mAdapter.setOnItemClickListener(activity as? SheetHistoryAdapter.OnItemClickListener)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -35,11 +42,11 @@ class MainFragment : Fragment() {
     }
 
     fun addSheet(sheet: Sheet) {
+        // TODO: Scroll to top
         mAdapter.prependSheet(sheet)
         mAdapter.notifyItemInserted(0)
         if (mAdapter.itemCount > 1) {
             mAdapter.notifyItemRangeChanged(1, mAdapter.itemCount - 1)
         }
     }
-
 }

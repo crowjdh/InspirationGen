@@ -4,8 +4,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import butterknife.bindView
+import com.jakewharton.rxbinding.view.clicks
 import kr.blogspot.crowjdh.inspirationgen.R
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 
@@ -18,7 +20,12 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 class SheetHistoryAdapter(sheets: MutableList<Sheet> = mutableListOf()):
         RecyclerView.Adapter<SheetHistoryAdapter.SheetHistoryViewHolder>() {
 
+    interface OnItemClickListener {
+        fun onItemClick(index: Int, item: Sheet)
+    }
+
     private val mSheets = sheets
+    private var mOnItemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SheetHistoryViewHolder? {
         val view = LayoutInflater.from(parent!!.context)
@@ -27,8 +34,11 @@ class SheetHistoryAdapter(sheets: MutableList<Sheet> = mutableListOf()):
     }
 
     override fun onBindViewHolder(holder: SheetHistoryViewHolder?, position: Int) {
+        val item = mSheets[position]
+
         holder!!.numberView.text = position.toString()
-        holder.contentView.text = mSheets[position].name
+        holder.contentView.text = item.name
+        holder.playButton.clicks().subscribe { mOnItemClickListener?.onItemClick(position, item) }
     }
 
     override fun getItemCount() = mSheets.count()
@@ -37,9 +47,14 @@ class SheetHistoryAdapter(sheets: MutableList<Sheet> = mutableListOf()):
         mSheets.add(0, sheet)
     }
 
+    fun setOnItemClickListener(listener: OnItemClickListener?) {
+        mOnItemClickListener = listener
+    }
+
     class SheetHistoryViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
         val numberView: TextView by bindView(R.id.number)
         val contentView: TextView by bindView(R.id.content)
+        val playButton: ImageView by bindView(R.id.play)
     }
 }
