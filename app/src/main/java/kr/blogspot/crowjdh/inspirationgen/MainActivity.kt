@@ -1,11 +1,14 @@
 package kr.blogspot.crowjdh.inspirationgen
 
-//import kr.blogspot.crowjdh.midisupport.event.meta.TimeSignature
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import butterknife.bindView
+import com.jakewharton.rxbinding.view.clicks
 import kr.blogspot.crowjdh.inspirationgen.extensions.pauseIfPlaying
-import kr.blogspot.crowjdh.inspirationgen.extensions.startIfNotPlaying
+import kr.blogspot.crowjdh.inspirationgen.extensions.stopIfPlaying
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
@@ -13,35 +16,57 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.toMidiFile
 import java.io.File
 import kotlin.properties.Delegates
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener {
 
-    var mPlayer: MediaPlayer by Delegates.notNull()
+    private var mCacheFile: File by Delegates.notNull()
+
+    private val mToolbar: Toolbar by bindView(R.id.toolbar)
+    private val mGenerateFab: FloatingActionButton by bindView(R.id.generate);
+
+    private var mPlayer = MediaPlayer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(mToolbar)
 
-        // TODO: Create UI and move below into action(Consider RxBinding)
-        val cacheFile = createCacheFile()
-        generateRandomSheet(cacheFile)
-        prepareMediaPlayer(cacheFile)
+        initMediaPlayer()
+        initCacheFile()
+        initActions()
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun initMediaPlayer() {
+        mPlayer.setOnPreparedListener(this)
+    }
 
-        playMediaPlayer()
+    private fun initCacheFile() {
+        mCacheFile = File(cacheDir, "temp.mid")
+    }
+
+    private fun initActions() {
+        mGenerateFab.clicks().subscribe {
+            mPlayer.stopIfPlaying()
+
+            val sheet = generateRandomSheet()
+            sheet.toMidiFile(120f).writeToFile(mCacheFile)
+
+            playMediaPlayerWithFile(mCacheFile)
+        }
+    }
+
+    private fun playMediaPlayerWithFile(file: File) {
+        mPlayer.reset()
+        mPlayer.setDataSource(file.absolutePath)
+        mPlayer.prepareAsync()
     }
 
     override fun onPause() {
         super.onPause()
 
-        pauseMediaPlayer()
+        mPlayer.pauseIfPlaying()
     }
 
-    private fun createCacheFile(): File = File(cacheDir, "temp.mid")
-
-    private fun generateRandomSheet(cacheFile: File) {
+    private fun generateRandomSheet(): Sheet {
         val sheet = Sheet()
         sheet.addBars(Bar.generate {
             barCount = 2
@@ -49,20 +74,11 @@ class MainActivity : AppCompatActivity() {
             noteLengthRange = Bar.Generator.NoteLengthRange.create(
                     Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
         })
-        sheet.toMidiFile(120f).writeToFile(cacheFile)
+
+        return sheet
     }
 
-    private fun prepareMediaPlayer(file: File) {
-        mPlayer = MediaPlayer()
-        mPlayer.setDataSource(file.absolutePath)
-        mPlayer.prepare()
-    }
-
-    private fun playMediaPlayer() {
-        mPlayer.startIfNotPlaying()
-    }
-
-    private fun pauseMediaPlayer() {
-        mPlayer.pauseIfPlaying()
+    override fun onPrepared(mp: MediaPlayer?) {
+        mp?.start()
     }
 }

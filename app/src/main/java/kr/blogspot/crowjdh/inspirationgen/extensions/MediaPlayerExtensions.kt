@@ -15,3 +15,7 @@ fun MediaPlayer.startIfNotPlaying() {
 fun MediaPlayer.pauseIfPlaying() {
     if (isPlaying) pause()
 }
+
+fun MediaPlayer.stopIfPlaying() {
+    if (isPlaying) stop()
+}
