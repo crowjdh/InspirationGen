@@ -7,10 +7,11 @@ package kr.blogspot.crowjdh.inspirationgen.music.models
  */
 
 class TimeSignature(val count: Int, val noteLength: NoteLength) {
+
     fun capableTicks() = noteLength.ticks() * count
     fun canContainTickType(tickType: TickType) = tickType.ticks <= capableTicks()
 
     companion object Factory {
-        val default = TimeSignature(4, NoteLength.QUARTER)
+        fun createDefault() = TimeSignature(4, NoteLength.QUARTER)
     }
 }

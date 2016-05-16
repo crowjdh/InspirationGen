@@ -10,29 +10,19 @@ import java.util.*
  */
 
 class Bar(timeSignature: TimeSignature? = null): TickType {
-    var timeSignature: TimeSignature
-        get() {
-            return _timeSignature ?: TimeSignature.default
-        }
+    var timeSignature = timeSignature ?: TimeSignature.createDefault()
         set(value) {
             if (value.canContainTickType(this)) {
-                _timeSignature = value
+                field = value
             }
         }
-    val notables: ArrayList<Notable>
-        get() = _notables
+    val notables = arrayListOf<Notable>()
 
     val ticksLeft: Long
         get() = this.timeSignature.capableTicks() - ticks
 
-    private var _notables: ArrayList<Notable> = arrayListOf()
-    private var _timeSignature: TimeSignature? = null
-
-    init {
-        if (timeSignature != null) {
-            this.timeSignature = timeSignature
-        }
-    }
+    override val ticks: Long
+        get() = notables.map { it.ticks }.fold(0L) { prev, cur -> prev + cur }
 
     fun removeNotableAt(index: Int) = notables.removeAt(index)
 
@@ -48,9 +38,6 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
             return false
         }
     }
-
-    override val ticks: Long
-        get() = notables.map { it.ticks }.fold(0L) { prev, cur -> prev + cur }
 
     private fun canAddNotable(notable: Notable): Boolean {
         val targetTicks = ticks + notable.length.ticks()
@@ -116,7 +103,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
         private fun Options.randomIntInRange(range: IntRange)
                 = Random(seed).nextInt(range.count()) + range.start
 
-        class Options(var timeSignature: TimeSignature = TimeSignature.default,
+        class Options(var timeSignature: TimeSignature = TimeSignature.createDefault(),
                       var pitchRange: IntRange = 60..72,
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var barCount: Int = 1,

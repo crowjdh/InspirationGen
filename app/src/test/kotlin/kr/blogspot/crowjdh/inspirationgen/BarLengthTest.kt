@@ -33,7 +33,7 @@ class BarLengthTest {
                 bar.addNotableIgnoringResult(notable)
             }
             val barTicks = bar.ticks
-            val capability = TimeSignature.default.capableTicks()
+            val capability = bar.timeSignature.capableTicks()
             assertTrue(barTicks <= capability)
         }
     }
