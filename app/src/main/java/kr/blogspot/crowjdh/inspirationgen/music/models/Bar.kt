@@ -9,7 +9,8 @@ import java.util.*
  * Bar
  */
 
-class Bar(timeSignature: TimeSignature? = null): TickType {
+class Bar(timeSignature: TimeSignature? = null): TickType, Record {
+    override var _id: Long? = null
     var timeSignature = timeSignature ?: TimeSignature.createDefault()
         set(value) {
             if (value.canContainTickType(this)) {

@@ -10,16 +10,14 @@ import java.util.*
  */
 
 const val DEFAULT_TPQN = 480
-class Sheet() {
+class Sheet(override var _id: Long? = null,
+            var name: String = generateRandomName(),
+            private val bars: ArrayList<Bar> = arrayListOf()): Record {
 
-    private var _bars: ArrayList<Bar> = arrayListOf()
-    var name: String = generateRandomName()
-    val bars: ArrayList<Bar>
-        get() = _bars
-
-    fun addBar(bar: Bar) = _bars.add(bar)
-
-    fun addBars(bars: List<Bar>) = _bars.addAll(bars)
-
-    fun removeBarAt(index: Int) = _bars.removeAt(index)
+    fun addBar(bar: Bar) = bars.add(bar)
+    fun addBars(bars: List<Bar>) = this.bars.addAll(bars)
+    fun removeBarAt(index: Int) = bars.removeAt(index)
+    fun forEachBars(action: (Bar) -> Unit): Unit {
+        for (element in bars) action(element)
+    }
 }
