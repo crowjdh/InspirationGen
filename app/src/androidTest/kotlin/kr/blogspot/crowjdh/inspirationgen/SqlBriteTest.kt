@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
  * AndroidJUnitSampleTest
  */
 @RunWith(AndroidJUnit4::class)
-class AndroidJUnitSampleTest():
+class SqlBriteTest():
         ApplicationTestCase<InspirationGenApplication>(InspirationGenApplication::class.java) {
 
     companion object {
