@@ -13,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import rx.Observable
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 15.
@@ -39,7 +40,7 @@ class SqlBriteTest():
                 noteOverRestBias = .8f
                 noteLengthRange = Bar.Generator.NoteLengthRange.create(
                         Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
-                fixedSeed = 100
+                atomicBaseSeed = AtomicLong(100)
             }
         }
     }
@@ -92,7 +93,7 @@ class SqlBriteTest():
             Log.i(TAG, "1, 2, 3, 4. This message will be displayed only once.")
         }
         InspirationGenDatabase.get().tableObservable<Sheet>(Sheet::class)
-                ?.takeUntil { stopTwo.get() }?.doOnNext { stopTwo.set(true) }?.subscribe {
+                .takeUntil { stopTwo.get() }.doOnNext { stopTwo.set(true) }.subscribe {
             Log.i(TAG, "tableObservable. This message will be displayed only once.")
         }
     }

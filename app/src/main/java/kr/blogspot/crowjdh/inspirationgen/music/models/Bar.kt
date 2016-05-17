@@ -4,6 +4,7 @@ import kr.blogspot.crowjdh.inspirationgen.extensions.hashCodeWith
 import kr.blogspot.crowjdh.inspirationgen.extensions.pickFromMap
 import kr.blogspot.crowjdh.inspirationgen.model.FilterArrayList
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 4.
@@ -110,10 +111,10 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var barCount: Int = 1,
                       var noteOverRestBias: Float = .5f,
-                      var fixedSeed: Long? = null) {
+                      var atomicBaseSeed: AtomicLong? = null) {
 
             val seed: Long
-                get() = fixedSeed ?: System.nanoTime()
+                get() = atomicBaseSeed?.andIncrement ?: System.nanoTime()
 
             fun validateOrThrow() {
                 assert(barCount > 0) { "options.barCount MUST BE > 0" }
