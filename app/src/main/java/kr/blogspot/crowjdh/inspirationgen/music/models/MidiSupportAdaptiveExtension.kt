@@ -34,7 +34,7 @@ fun Sheet.toMidiFile(bpm: Float): MidiFile {
     track.insertEvent(tempo)
 
     var accumulatedTicks = 0L
-    forEachBars { bar ->
+    bars.forEach { bar ->
         bar.toEachMidiEvents(accumulatedTicks) { event, ticks ->
             track.insertEvent(event)
             accumulatedTicks += ticks

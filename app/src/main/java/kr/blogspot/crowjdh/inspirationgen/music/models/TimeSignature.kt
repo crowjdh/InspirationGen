@@ -6,7 +6,7 @@ package kr.blogspot.crowjdh.inspirationgen.music.models
  * TimeSignature
  */
 
-class TimeSignature(val count: Int, val noteLength: NoteLength) {
+data class TimeSignature(val count: Int, val noteLength: NoteLength) {
 
     fun capableTicks() = noteLength.ticks() * count
     fun canContainTickType(tickType: TickType) = tickType.ticks <= capableTicks()

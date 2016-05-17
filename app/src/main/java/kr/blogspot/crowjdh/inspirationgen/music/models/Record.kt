@@ -7,5 +7,12 @@ package kr.blogspot.crowjdh.inspirationgen.music.models
  *  description
  */
 interface Record {
-    var _id: Long?
+
+    var _id: Long
+
+    val records: List<Record>?
+
+    companion object {
+        val invalidId: Long = 0
+    }
 }

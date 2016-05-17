@@ -48,7 +48,6 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
         private val SQL_CREATE_BAR_ENTRY =
                 "CREATE TABLE " + Bar.tableName + "(" +
                         Bar._id                     + type_autoIncrement + comma_sep +
-                        Bar.barIndex                + type_int + comma_sep +
                         Bar.encodedNotables         + type_text + comma_sep +
                         Bar.timeSignatureCount      + type_int + comma_sep +
                         Bar.timeSignatureNoteLength + type_int +

@@ -24,7 +24,6 @@ abstract class InsGenDbContract {
         companion object Entry: Table {
             val _id = "_id"
             override val tableName = "bars"
-            val barIndex = "barIndex"
             val timeSignatureCount = "time_signature_count"
             val timeSignatureNoteLength = "time_signature_note_length"
             val encodedNotables = "encoded_notables"

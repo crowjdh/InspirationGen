@@ -30,7 +30,7 @@ class BarLengthTest {
         TestNotables.permutateNotables { notables ->
             val bar = Bar()
             for (notable in notables) {
-                bar.addNotableIgnoringResult(notable)
+                bar.notables.add(notable)
             }
             val barTicks = bar.ticks
             val capability = bar.timeSignature.capableTicks()
@@ -44,7 +44,7 @@ class BarLengthTest {
             TestTimeSignatures.forEachTimeSignature { timeSignature ->
                 val bar = Bar()
                 for (notable in notables) {
-                    if (!bar.addNotableAndGetResult(notable)) {
+                    if (!bar.notables.add(notable)) {
                         break
                     }
                 }

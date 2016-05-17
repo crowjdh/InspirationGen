@@ -47,7 +47,7 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
 
     private fun generateRandomSheet(): Sheet {
         val sheet = Sheet()
-        sheet.addBars(Bar.generate {
+        sheet.bars.addAll(Bar.generate {
             barCount = 2
             noteOverRestBias = .8f
             noteLengthRange = Bar.Generator.NoteLengthRange.create(

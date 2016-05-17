@@ -26,7 +26,7 @@ class BarGenerationTest {
             TestTimeSignatures.forEachTimeSignature { timeSignature ->
                 val bar = Bar()
                 for (notable in notables) {
-                    if (!bar.addNotableAndGetResult(notable)) {
+                    if (!bar.notables.add(notable)) {
                         break
                     }
                 }
