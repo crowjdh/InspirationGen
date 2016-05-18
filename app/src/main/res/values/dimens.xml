@@ -5,4 +5,6 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="vh_sheet_history_row_height">30dp</dimen>
+    <dimen name="vh_settings_row_height">30dp</dimen>
+    <dimen name="vh_settings_row_padding">4dp</dimen>
 </resources>

@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import butterknife.bindView
 import com.jakewharton.rxbinding.view.clicks
 import kr.blogspot.crowjdh.inspirationgen.R
 import kr.blogspot.crowjdh.inspirationgen.extensions.insert
+import kr.blogspot.crowjdh.inspirationgen.extensions.startActivity
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Scale
@@ -30,6 +33,18 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
 
         initMidiPlayFragment()
         initActions()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.action_settings -> startActivity(SettingsActivity::class)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initMidiPlayFragment() {
