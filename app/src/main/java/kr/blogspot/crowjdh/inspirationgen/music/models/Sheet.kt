@@ -13,8 +13,10 @@ import java.util.*
 const val DEFAULT_TPQN = 480
 class Sheet(override var _id: Long = Record.invalidId,
             var name: String = generateRandomName(),
-            var bpm: Int = 120,
-            val bars: ArrayList<Bar> = arrayListOf()): Record {
+            val bars: ArrayList<Bar> = arrayListOf(),
+            optionBuilder: Options.() -> Unit = {}): Record {
+
+    var bpm: Int = Options.create(optionBuilder).bpm
 
     override val records: List<Record>
         get() = bars
@@ -30,6 +32,23 @@ class Sheet(override var _id: Long = Record.invalidId,
         return other._id.equals(this._id)
                 && other.name.equals(this.name)
                 && other.bars.equals(this.bars)
+    }
+
+    class Options(var bpm: Int = 120) {
+
+        fun validateOrThrow() {
+            assert(bpm <= 0) { "bpm MUST BE > 0" }
+        }
+
+        companion object Factory {
+
+            fun create(build: Options.() -> Unit): Options {
+                val options = Options()
+                options.build()
+                options.validateOrThrow()
+                return options
+            }
+        }
     }
 
 }
