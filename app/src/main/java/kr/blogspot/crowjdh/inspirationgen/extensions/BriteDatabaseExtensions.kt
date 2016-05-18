@@ -147,7 +147,7 @@ private val barToContentValuesMapper: (bar: Bar) -> ContentValues = {
 private val cursorToBarMapper: (cursor: Cursor) -> Bar = {
     val bar = Bar()
 
-    bar._id = it.getLong(InsGenDbContract.Sheet._id)
+    bar._id = it.getLong(InsGenDbContract.Bar._id)
     val count = it.getInt(InsGenDbContract.Bar.timeSignatureCount)
     val length = it.getInt(InsGenDbContract.Bar.timeSignatureNoteLength)
     bar.timeSignature = TimeSignature(count, NoteLength.fromLength(length.toFloat())!!)
@@ -158,6 +158,44 @@ private val cursorToBarMapper: (cursor: Cursor) -> Bar = {
     bar
 }
 
+private val sheetOptionsToContentValuesMapper: (options: Sheet.Options) -> ContentValues = {
+    val values = ContentValues()
+
+    values.put(InsGenDbContract.SheetOptions.bpm, it.bpm)
+    values
+}
+
+private val cursorToSheetOptionsMapper: (cursor: Cursor) -> Sheet.Options = {
+    Sheet.Options.create {
+        _id = it.getLong(InsGenDbContract.SheetOptions._id)
+        bpm = it.getInt(InsGenDbContract.SheetOptions.bpm)
+    }
+}
+
+private val barOptionsToContentValuesMapper: (options: Bar.Generator.Options) -> ContentValues = {
+    val values = ContentValues()
+
+    values.put(InsGenDbContract.BarOptions.timeSignature, it.timeSignature.toGsonString())
+    values.put(InsGenDbContract.BarOptions.pitchRange, it.pitchRange.toGsonString())
+    values.put(InsGenDbContract.BarOptions.noteLengthRange, it.noteLengthRange.toGsonString())
+    values.put(InsGenDbContract.BarOptions.barCount, it.barCount.toGsonString())
+    values.put(InsGenDbContract.BarOptions.noteOverRestBias, it.noteOverRestBias.toGsonString())
+    values.put(InsGenDbContract.BarOptions.atomicBaseSeed, it.atomicBaseSeed?.toGsonString())
+    values
+}
+
+private val cursorToBarOptionsMapper: (cursor: Cursor) -> Bar.Generator.Options = {
+    Bar.Generator.Options.create {
+        _id = it.getLong(InsGenDbContract.BarOptions._id)
+        timeSignature = it.getString(InsGenDbContract.BarOptions.timeSignature).fromGsonString()
+        pitchRange = it.getString(InsGenDbContract.BarOptions.pitchRange).fromGsonString()
+        noteLengthRange = it.getString(InsGenDbContract.BarOptions.noteLengthRange).fromGsonString()
+        barCount = it.getString(InsGenDbContract.BarOptions.barCount).fromGsonString()
+        noteOverRestBias = it.getString(InsGenDbContract.BarOptions.noteOverRestBias).fromGsonString()
+        atomicBaseSeed = it.getString(InsGenDbContract.BarOptions.atomicBaseSeed).fromGsonString()
+    }
+}
+
 private val modelToMapperMap = hashMapOf<KClass<*>, MapperMeta<*>>(
         Pair(Sheet::class,
                 MapperMeta(InsGenDbContract.Sheet.tableName,
@@ -166,4 +204,12 @@ private val modelToMapperMap = hashMapOf<KClass<*>, MapperMeta<*>>(
         Pair(Bar::class,
                 MapperMeta(InsGenDbContract.Bar.tableName,
                         barToContentValuesMapper,
-                        cursorToBarMapper)))
+                        cursorToBarMapper)),
+        Pair(Sheet.Options::class,
+                MapperMeta(InsGenDbContract.SheetOptions.tableName,
+                        sheetOptionsToContentValuesMapper,
+                        cursorToSheetOptionsMapper)),
+        Pair(Bar.Generator.Options::class,
+                MapperMeta(InsGenDbContract.BarOptions.tableName,
+                        barOptionsToContentValuesMapper,
+                        cursorToBarOptionsMapper)))

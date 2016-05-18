@@ -29,4 +29,25 @@ abstract class InsGenDbContract {
             val encodedNotables = "encoded_notables"
         }
     }
+
+    abstract class SheetOptions {
+        companion object Entry: Table {
+            val _id = "_id"
+            override val tableName = "sheet_options"
+            val bpm = "bpm"
+        }
+    }
+
+    abstract class BarOptions {
+        companion object Entry: Table {
+            val _id = "_id"
+            override val tableName = "bars_options"
+            val timeSignature = "time_signature"
+            val pitchRange = "pitch_range"
+            val noteLengthRange = "note_length_range"
+            val barCount = "bar_count"
+            val noteOverRestBias = "note_over_rest_bias"
+            val atomicBaseSeed = "atomic_base_seed"
+        }
+    }
 }

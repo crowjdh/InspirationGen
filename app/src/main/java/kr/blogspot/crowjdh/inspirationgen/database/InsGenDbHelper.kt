@@ -3,9 +3,8 @@ package kr.blogspot.crowjdh.inspirationgen.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import kr.blogspot.crowjdh.inspirationgen.database.InsGenDbContract.*
 
-import kr.blogspot.crowjdh.inspirationgen.database.InsGenDbContract.Bar
-import kr.blogspot.crowjdh.inspirationgen.database.InsGenDbContract.Sheet
 
 /**
  * Created by Dongheyon Jeong in Randombox_Android from Yooii Studios Co., LTD. on 15. 8. 11.
@@ -24,6 +23,8 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
     private fun createAllTables(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_SHEET_ENTRY)
         db.execSQL(SQL_CREATE_BAR_ENTRY)
+        db.execSQL(SQL_CREATE_SHEET_OPTIONS_ENTRY)
+        db.execSQL(SQL_CREATE_BAR_OPTIONS_ENTRY)
     }
 
     companion object {
@@ -51,6 +52,21 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
                         Bar.encodedNotables         + type_text + comma_sep +
                         Bar.timeSignatureCount      + type_int + comma_sep +
                         Bar.timeSignatureNoteLength + type_int +
+                        " )"
+        private val SQL_CREATE_SHEET_OPTIONS_ENTRY =
+                "CREATE TABLE " + SheetOptions.tableName + "(" +
+                        SheetOptions._id    + type_autoIncrement + comma_sep +
+                        SheetOptions.bpm    + type_int +
+                        " )"
+        private val SQL_CREATE_BAR_OPTIONS_ENTRY =
+                "CREATE TABLE " + BarOptions.tableName + "(" +
+                        BarOptions._id              + type_autoIncrement + comma_sep +
+                        BarOptions.timeSignature    + type_text + comma_sep +
+                        BarOptions.pitchRange       + type_text + comma_sep +
+                        BarOptions.noteLengthRange  + type_text + comma_sep +
+                        BarOptions.barCount         + type_text + comma_sep +
+                        BarOptions.noteOverRestBias + type_text + comma_sep +
+                        BarOptions.atomicBaseSeed   + type_text +
                         " )"
     }
 }

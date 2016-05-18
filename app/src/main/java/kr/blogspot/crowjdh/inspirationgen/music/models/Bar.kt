@@ -111,10 +111,31 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var barCount: Int = 1,
                       var noteOverRestBias: Float = .5f,
-                      var atomicBaseSeed: AtomicLong? = null) {
+                      var atomicBaseSeed: AtomicLong? = null): Record {
+
+            override var _id: Long = Record.invalidId
+            override val records = null
 
             val seed: Long
                 get() = atomicBaseSeed?.andIncrement ?: System.nanoTime()
+
+            override fun hashCode(): Int {
+                return hashCodeWith(_id, timeSignature, pitchRange, noteLengthRange,
+                        barCount, noteOverRestBias, atomicBaseSeed)
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (other !is Options) {
+                    return false
+                }
+                return other._id.equals(this._id)
+                        && other.timeSignature.equals(this.timeSignature)
+                        && other.pitchRange.equals(this.pitchRange)
+                        && other.noteLengthRange.equals(this.noteLengthRange)
+                        && other.barCount.equals(this.barCount)
+                        && other.noteOverRestBias.equals(this.noteOverRestBias)
+                        && other.atomicBaseSeed?.get() == this.atomicBaseSeed?.get()
+            }
 
             fun validateOrThrow() {
                 assert(barCount > 0) { "options.barCount MUST BE > 0" }

@@ -4,9 +4,7 @@ import android.support.test.runner.AndroidJUnit4
 import android.test.ApplicationTestCase
 import android.util.Log
 import kr.blogspot.crowjdh.inspirationgen.extensions.*
-import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
-import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
-import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
+import kr.blogspot.crowjdh.inspirationgen.music.models.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -47,15 +45,22 @@ class SqlBriteTest():
 
     @Before
     fun setup() {
+        clearDatabase()
+    }
+
+    @After
+    fun teardown() {
+        clearDatabase()
+    }
+
+    private fun clearDatabase() {
         super.setUp()
         val database = InspirationGenDatabase.get()
 
         database.delete(getMapperOf<Sheet>(Sheet::class).tableName, null)
         database.delete(getMapperOf<Bar>(Bar::class).tableName, null)
-    }
-
-    @After
-    fun teardown() {
+        database.delete(getMapperOf<Sheet.Options>(Sheet.Options::class).tableName, null)
+        database.delete(getMapperOf<Bar.Generator.Options>(Bar.Generator.Options::class).tableName, null)
     }
 
     @Test
@@ -99,15 +104,15 @@ class SqlBriteTest():
     }
 
     @Test
-    fun createSheet_equalsToQueriedSheet() {
+    fun createSheet_equalsToQueriedRecord() {
         val sheet = createSheet("one")
         sheet.insert()
 
-        assertEqualsToSavedSheet(sheet)
+        assertEqualsToSavedRecord(sheet)
     }
 
     @Test
-    fun modifyAndDeleteSheet_equalsToQueriedSheet() {
+    fun modifyAndDeleteSheet_equalsToQueriedRecord() {
         val sheet = createSheet("one")
         sheet.insert()
 
@@ -124,7 +129,7 @@ class SqlBriteTest():
         }
 
         assertEquals(remainedBars!!, sheet.bars)
-        assertEqualsToSavedSheet(sheet)
+        assertEqualsToSavedRecord(sheet)
 
         sheet.delete()
 
@@ -134,8 +139,30 @@ class SqlBriteTest():
         assertEquals(0, barCount)
     }
 
-    private fun assertEqualsToSavedSheet(sheet: Sheet) {
-        val selectedSheet = InspirationGenDatabase.get().select<Sheet>(Sheet::class, sheet._id)
-        assertEquals(sheet, selectedSheet)
+    @Test
+    fun createSheetOptions_equalsToQueriedRecord() {
+        val options = Sheet.Options.create { bpm = 150 }
+        options.insert()
+        assertEqualsToSavedRecord(options)
+    }
+
+    @Test
+    fun createBarOptions_equalsToQueriedRecord() {
+        val options = Bar.Generator.Options.create {
+            timeSignature = TimeSignature(3, NoteLength.HALF)
+            pitchRange = 80..81
+            barCount = 2
+            noteOverRestBias = .8f
+            noteLengthRange = Bar.Generator.NoteLengthRange.create(
+                    Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
+            atomicBaseSeed = AtomicLong(123)
+        }
+        options.insert()
+        assertEqualsToSavedRecord(options)
+    }
+
+    private inline fun <reified T: Record> assertEqualsToSavedRecord(record: T) {
+        val selectedSheet = InspirationGenDatabase.get().select<T>(T::class, record._id)
+        assertEquals(record, selectedSheet)
     }
 }
