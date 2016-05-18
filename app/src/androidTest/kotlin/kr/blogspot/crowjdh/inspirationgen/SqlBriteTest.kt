@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong
 /**
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 15.
  *
- * AndroidJUnitSampleTest
+ * SqlBriteTest
  */
 @RunWith(AndroidJUnit4::class)
 class SqlBriteTest():
