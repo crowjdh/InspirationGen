@@ -9,6 +9,8 @@ import android.widget.TextView
 import butterknife.bindView
 import com.jakewharton.rxbinding.view.clicks
 import kr.blogspot.crowjdh.inspirationgen.R
+import kr.blogspot.crowjdh.inspirationgen.extensions.InspirationGenDatabase
+import kr.blogspot.crowjdh.inspirationgen.extensions.observeTable
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 
 /**
@@ -17,14 +19,20 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
  * SheetHistoryAdapter
  */
 
-class SheetHistoryAdapter(sheets: MutableList<Sheet> = mutableListOf()):
-        RecyclerView.Adapter<SheetHistoryAdapter.SheetHistoryViewHolder>() {
+class SheetHistoryAdapter(): RecyclerView.Adapter<SheetHistoryAdapter.SheetHistoryViewHolder>() {
+
+    init {
+        InspirationGenDatabase.get().observeTable<Sheet>(Sheet::class) {
+            mSheets = it
+            notifyDataSetChanged()
+        }
+    }
 
     interface OnItemClickListener {
         fun onItemClick(index: Int, item: Sheet)
     }
 
-    private val mSheets = sheets
+    private var mSheets = emptyList<Sheet>()
     private var mOnItemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SheetHistoryViewHolder? {
@@ -42,10 +50,6 @@ class SheetHistoryAdapter(sheets: MutableList<Sheet> = mutableListOf()):
     }
 
     override fun getItemCount() = mSheets.count()
-
-    fun prependSheet(sheet: Sheet) {
-        mSheets.add(0, sheet)
-    }
 
     fun setOnItemClickListener(listener: OnItemClickListener?) {
         mOnItemClickListener = listener

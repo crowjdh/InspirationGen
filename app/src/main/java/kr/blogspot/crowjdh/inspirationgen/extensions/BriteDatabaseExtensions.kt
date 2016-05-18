@@ -11,6 +11,7 @@ import kr.blogspot.crowjdh.inspirationgen.database.InsGenDbHelper
 import kr.blogspot.crowjdh.inspirationgen.music.models.*
 import rx.Observable
 import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import kotlin.reflect.KClass
 
@@ -28,7 +29,8 @@ fun <T: Record> BriteDatabase.observeTable(clazz: KClass<*>, onNext: (it: List<T
         : Subscription {
     val mapperMeta = getMapperOf<T>(clazz)
 
-    return tableObservable<T>(clazz).subscribeOn(Schedulers.io()).subscribe({ onNext(it) }) {
+    return tableObservable<T>(clazz).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe({ onNext(it) }) {
         Log.e(TAG, "Exception thrown while subscribing table ${mapperMeta.tableName}", it)
     }
 }

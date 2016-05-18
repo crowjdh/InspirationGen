@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar
 import butterknife.bindView
 import com.jakewharton.rxbinding.view.clicks
 import kr.blogspot.crowjdh.inspirationgen.R
+import kr.blogspot.crowjdh.inspirationgen.extensions.insert
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
@@ -16,8 +17,6 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
 
     private val midiPlayerFragmentTag = "midiPlayerFragmentTag"
 
-    private val mainFragment: MainFragment
-        get() = supportFragmentManager.findFragmentById(R.id.mainFragment) as MainFragment
     private val midiPlayFragment = MidiPlayFragment.create()
 
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
@@ -40,7 +39,7 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
     private fun initActions() {
         mGenerateFab.clicks().subscribe {
             val sheet = generateRandomSheet()
-            mainFragment.addSheet(sheet)
+            sheet.insert()
             midiPlayFragment.playSheet(sheet)
         }
     }

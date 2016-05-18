@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.bindView
 import kr.blogspot.crowjdh.inspirationgen.R
-import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
 import kotlin.properties.Delegates
 
@@ -42,14 +41,5 @@ class MainFragment: Fragment() {
         mLayoutManager = LinearLayoutManager(context)
         mSheetHistoryRecyclerView.layoutManager = mLayoutManager
         mSheetHistoryRecyclerView.adapter = mAdapter
-    }
-
-    fun addSheet(sheet: Sheet) {
-        mAdapter.prependSheet(sheet)
-        mAdapter.notifyItemInserted(0)
-        if (mAdapter.itemCount > 1) {
-            mAdapter.notifyItemRangeChanged(1, mAdapter.itemCount - 1)
-        }
-        mLayoutManager.scrollToPositionWithOffset(0, 0)
     }
 }
