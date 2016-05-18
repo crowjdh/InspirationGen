@@ -13,6 +13,7 @@ import java.util.*
 const val DEFAULT_TPQN = 480
 class Sheet(override var _id: Long = Record.invalidId,
             var name: String = generateRandomName(),
+            var bpm: Int = 120,
             val bars: ArrayList<Bar> = arrayListOf()): Record {
 
     override val records: List<Record>

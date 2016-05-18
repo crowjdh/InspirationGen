@@ -33,7 +33,7 @@ class MidiPlayFragment: Fragment(), MediaPlayer.OnPreparedListener {
     fun playSheet(sheet: Sheet) {
         mPlayer.stopIfPlaying()
 
-        sheet.toMidiFile(120f).writeToFile(mCacheFile)
+        sheet.toMidiFile().writeToFile(mCacheFile)
 
         playMediaPlayerWithFile(mCacheFile)
     }

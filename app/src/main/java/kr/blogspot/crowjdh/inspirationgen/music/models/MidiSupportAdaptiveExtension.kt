@@ -26,11 +26,10 @@ fun TimeSignature.toMidiTimeSignature(): kr.blogspot.crowjdh.midisupport.event.m
     return midiTimeSignature
 }
 
-// TODO: Move bpm into Bar.Generator.Options
-fun Sheet.toMidiFile(bpm: Float): MidiFile {
+fun Sheet.toMidiFile(): MidiFile {
     val track = MidiTrack()
     val tempo = Tempo()
-    tempo.bpm = bpm
+    tempo.bpm = bpm.toFloat()
     track.insertEvent(tempo)
 
     var accumulatedTicks = 0L
