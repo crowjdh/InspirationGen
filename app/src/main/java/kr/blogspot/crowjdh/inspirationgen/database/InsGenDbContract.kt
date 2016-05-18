@@ -43,7 +43,7 @@ abstract class InsGenDbContract {
             val _id = "_id"
             override val tableName = "bars_options"
             val timeSignature = "time_signature"
-            val pitchRange = "pitch_range"
+            val scale = "scale"
             val noteLengthRange = "note_length_range"
             val barCount = "bar_count"
             val noteOverRestBias = "note_over_rest_bias"

@@ -150,7 +150,7 @@ class SqlBriteTest():
     fun createBarOptions_equalsToQueriedRecord() {
         val options = Bar.Generator.Options.create {
             timeSignature = TimeSignature(3, NoteLength.HALF)
-            pitchRange = 80..81
+            scale = Scale(80..81)
             barCount = 2
             noteOverRestBias = .8f
             noteLengthRange = Bar.Generator.NoteLengthRange.create(

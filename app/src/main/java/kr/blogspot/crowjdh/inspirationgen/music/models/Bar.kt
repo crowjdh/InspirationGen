@@ -98,16 +98,16 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                 = Random(options.seed).pickFromMap(options.noteLengthRange.items)
 
         private fun generateRandomPitch(options: Options)
-                = options.randomIntInRange(options.pitchRange)
+                = options.randomItemInList(options.scale.pitches)
 
         private fun Options.randomIntBelow(n: Int)
                 = Random(seed).nextInt(n)
 
-        private fun Options.randomIntInRange(range: IntRange)
-                = Random(seed).nextInt(range.count()) + range.start
+        private fun <T> Options.randomItemInList(list: List<T>)
+                = list[Random(seed).nextInt(list.count())]
 
         class Options(var timeSignature: TimeSignature = TimeSignature.createDefault(),
-                      var pitchRange: IntRange = 60..72,
+                      var scale: Scale = Scale(60..72),
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var barCount: Int = 1,
                       var noteOverRestBias: Float = .5f,
@@ -120,7 +120,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                 get() = atomicBaseSeed?.andIncrement ?: System.nanoTime()
 
             override fun hashCode(): Int {
-                return hashCodeWith(_id, timeSignature, pitchRange, noteLengthRange,
+                return hashCodeWith(_id, timeSignature, scale, noteLengthRange,
                         barCount, noteOverRestBias, atomicBaseSeed)
             }
 
@@ -130,7 +130,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                 }
                 return other._id.equals(this._id)
                         && other.timeSignature.equals(this.timeSignature)
-                        && other.pitchRange.equals(this.pitchRange)
+                        && other.scale.equals(this.scale)
                         && other.noteLengthRange.equals(this.noteLengthRange)
                         && other.barCount.equals(this.barCount)
                         && other.noteOverRestBias.equals(this.noteOverRestBias)

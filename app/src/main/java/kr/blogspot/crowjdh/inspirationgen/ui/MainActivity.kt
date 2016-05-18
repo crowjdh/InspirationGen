@@ -10,6 +10,7 @@ import kr.blogspot.crowjdh.inspirationgen.R
 import kr.blogspot.crowjdh.inspirationgen.extensions.insert
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
+import kr.blogspot.crowjdh.inspirationgen.music.models.Scale
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
 
@@ -49,6 +50,7 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
         sheet.bars.addAll(Bar.generate {
             barCount = 2
             noteOverRestBias = .8f
+            scale = Scale.major(Scale.C4)
             noteLengthRange = Bar.Generator.NoteLengthRange.create(
                     Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
         })

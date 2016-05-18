@@ -2,10 +2,7 @@ package kr.blogspot.crowjdh.inspirationgen
 
 import kr.blogspot.crowjdh.inspirationgen.extensions.fromGsonString
 import kr.blogspot.crowjdh.inspirationgen.extensions.toGsonString
-import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
-import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
-import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
-import kr.blogspot.crowjdh.inspirationgen.music.models.TimeSignature
+import kr.blogspot.crowjdh.inspirationgen.music.models.*
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.test.assertEquals
@@ -22,7 +19,7 @@ class GsonTest {
     fun encodeAndDecodeBarGeneratorOptions_equals() {
         val options = Bar.Generator.Options.create {
             timeSignature = TimeSignature(3, NoteLength.HALF)
-            pitchRange = 80..81
+            scale = Scale(80..81)
             barCount = 2
             noteOverRestBias = .8f
             noteLengthRange = Bar.Generator.NoteLengthRange.create(

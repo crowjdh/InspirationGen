@@ -11,13 +11,19 @@ import kr.blogspot.crowjdh.inspirationgen.database.InsGenDbContract.*
 
  * InsGenDbHelper
  */
-class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelper.databaseName, null, InsGenDbHelper.databaseVersion) {
+class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelper.databaseName,
+        null, InsGenDbHelper.databaseVersion) {
 
     override fun onCreate(db: SQLiteDatabase) {
         createAllTables(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        dropTable(db, Sheet.tableName)
+        dropTable(db, Bar.tableName)
+        dropTable(db, SheetOptions.tableName)
+        dropTable(db, BarOptions.tableName)
+        createAllTables(db)
     }
 
     private fun createAllTables(db: SQLiteDatabase) {
@@ -27,8 +33,12 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
         db.execSQL(SQL_CREATE_BAR_OPTIONS_ENTRY)
     }
 
+    private fun dropTable(db: SQLiteDatabase, tableName: String) {
+        db.execSQL("DROP TABLE IF EXISTS " + tableName)
+    }
+
     companion object {
-        private val databaseVersion = 1
+        private val databaseVersion = 3
         private val invalidDatabaseVersion = -1
         private val databaseName = "InsGenDatabase"
 
@@ -62,7 +72,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
                 "CREATE TABLE " + BarOptions.tableName + "(" +
                         BarOptions._id              + type_autoIncrement + comma_sep +
                         BarOptions.timeSignature    + type_text + comma_sep +
-                        BarOptions.pitchRange       + type_text + comma_sep +
+                        BarOptions.scale            + type_text + comma_sep +
                         BarOptions.noteLengthRange  + type_text + comma_sep +
                         BarOptions.barCount         + type_text + comma_sep +
                         BarOptions.noteOverRestBias + type_text + comma_sep +

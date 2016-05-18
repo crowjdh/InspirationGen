@@ -178,7 +178,7 @@ private val barOptionsToContentValuesMapper: (options: Bar.Generator.Options) ->
     val values = ContentValues()
 
     values.put(InsGenDbContract.BarOptions.timeSignature, it.timeSignature.toGsonString())
-    values.put(InsGenDbContract.BarOptions.pitchRange, it.pitchRange.toGsonString())
+    values.put(InsGenDbContract.BarOptions.scale, it.scale.toGsonString())
     values.put(InsGenDbContract.BarOptions.noteLengthRange, it.noteLengthRange.toGsonString())
     values.put(InsGenDbContract.BarOptions.barCount, it.barCount.toGsonString())
     values.put(InsGenDbContract.BarOptions.noteOverRestBias, it.noteOverRestBias.toGsonString())
@@ -190,7 +190,7 @@ private val cursorToBarOptionsMapper: (cursor: Cursor) -> Bar.Generator.Options 
     Bar.Generator.Options.create {
         _id = it.getLong(InsGenDbContract.BarOptions._id)
         timeSignature = it.getString(InsGenDbContract.BarOptions.timeSignature).fromGsonString()
-        pitchRange = it.getString(InsGenDbContract.BarOptions.pitchRange).fromGsonString()
+        scale = it.getString(InsGenDbContract.BarOptions.scale).fromGsonString()
         noteLengthRange = it.getString(InsGenDbContract.BarOptions.noteLengthRange).fromGsonString()
         barCount = it.getString(InsGenDbContract.BarOptions.barCount).fromGsonString()
         noteOverRestBias = it.getString(InsGenDbContract.BarOptions.noteOverRestBias).fromGsonString()
