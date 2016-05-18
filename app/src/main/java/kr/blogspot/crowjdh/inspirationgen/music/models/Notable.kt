@@ -13,4 +13,34 @@ interface Notable: TickType {
 
     override val ticks: Long
         get() = length.ticks().toLong()
+
+    val description: String
+        get() = "${length.length}"
+
+    companion object Parser {
+
+        fun encode(notable: Notable): String {
+            return when (notable) {
+                is Note -> "${notable.description}|${notable.pitch}"
+                is Rest -> "${notable.description}"
+                else -> throw UnsupportedOperationException("Encoding $notable is not yet supported")
+            }
+        }
+
+        fun encode(notables: List<Notable>): String
+                = notables.fold("") { prev, cur -> prev + Notable.encode(cur) + "," }
+
+        fun decodeNotable(description: String): Notable {
+            if (description.contains('|')) {
+                val parts = description.split('|').filter { it.length > 0 }
+                return Note(NoteLength.fromLength(parts[0].toFloat())!!, parts[1].toInt())
+            } else {
+                return Rest(NoteLength.fromLength(description.toFloat())!!)
+            }
+        }
+
+        fun decodeNotables(notablesDescription: String): List<Notable> {
+            return notablesDescription.split(',').filter { it.length > 0 }.map { decodeNotable(it) }
+        }
+    }
 }

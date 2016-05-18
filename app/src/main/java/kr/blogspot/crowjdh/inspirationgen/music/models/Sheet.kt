@@ -1,5 +1,6 @@
 package kr.blogspot.crowjdh.inspirationgen.music.models
 
+import kr.blogspot.crowjdh.inspirationgen.extensions.hashCodeWith
 import kr.blogspot.crowjdh.inspirationgen.helpers.generateRandomName
 import java.util.*
 
@@ -10,16 +11,24 @@ import java.util.*
  */
 
 const val DEFAULT_TPQN = 480
-class Sheet() {
+class Sheet(override var _id: Long = Record.invalidId,
+            var name: String = generateRandomName(),
+            val bars: ArrayList<Bar> = arrayListOf()): Record {
 
-    private var _bars: ArrayList<Bar> = arrayListOf()
-    var name: String = generateRandomName()
-    val bars: ArrayList<Bar>
-        get() = _bars
+    override val records: List<Record>
+        get() = bars
 
-    fun addBar(bar: Bar) = _bars.add(bar)
+    override fun hashCode(): Int {
+        return hashCodeWith(_id, name, bars)
+    }
 
-    fun addBars(bars: List<Bar>) = _bars.addAll(bars)
+    override fun equals(other: Any?): Boolean {
+        if (other !is Sheet) {
+            return false
+        }
+        return other._id.equals(this._id)
+                && other.name.equals(this.name)
+                && other.bars.equals(this.bars)
+    }
 
-    fun removeBarAt(index: Int) = _bars.removeAt(index)
 }

@@ -1,7 +1,10 @@
 package kr.blogspot.crowjdh.inspirationgen.music.models
 
+import kr.blogspot.crowjdh.inspirationgen.extensions.hashCodeWith
 import kr.blogspot.crowjdh.inspirationgen.extensions.pickFromMap
+import kr.blogspot.crowjdh.inspirationgen.model.FilterArrayList
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Created by Dongheyon Jeong in InspirationGen from Yooii Studios Co., LTD. on 16. 5. 4.
@@ -9,14 +12,19 @@ import java.util.*
  * Bar
  */
 
-class Bar(timeSignature: TimeSignature? = null): TickType {
+class Bar(timeSignature: TimeSignature? = null): TickType, Record {
+    override var _id: Long = Record.invalidId
     var timeSignature = timeSignature ?: TimeSignature.createDefault()
         set(value) {
             if (value.canContainTickType(this)) {
                 field = value
             }
         }
-    val notables = arrayListOf<Notable>()
+    val filter: (Notable) -> Boolean = {
+        val targetTicks = ticks + it.length.ticks()
+        targetTicks <= this.timeSignature.capableTicks()
+    }
+    val notables = FilterArrayList(filter)
 
     val ticksLeft: Long
         get() = this.timeSignature.capableTicks() - ticks
@@ -24,25 +32,20 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
     override val ticks: Long
         get() = notables.map { it.ticks }.fold(0L) { prev, cur -> prev + cur }
 
-    fun removeNotableAt(index: Int) = notables.removeAt(index)
+    override val records: List<Record>?
+        get() = null
 
-    fun addNotableIgnoringResult(notable: Notable) {
-        addNotableAndGetResult(notable)
+    override fun hashCode(): Int {
+        return hashCodeWith(_id, this.timeSignature, notables)
     }
 
-    fun addNotableAndGetResult(notable: Notable): Boolean {
-        if (canAddNotable(notable)) {
-            notables.add(notable)
-            return true
-        } else {
+    override fun equals(other: Any?): Boolean {
+        if (other !is Bar) {
             return false
         }
-    }
-
-    private fun canAddNotable(notable: Notable): Boolean {
-        val targetTicks = ticks + notable.length.ticks()
-
-        return targetTicks <= timeSignature.capableTicks()
+        return other._id.equals(this._id)
+                && other.timeSignature.equals(this.timeSignature)
+                && other.notables.equals(this.notables)
     }
 
     companion object Generator {
@@ -65,7 +68,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
             var trialCount = 0
             do {
                 val notable = generateNotable(options)
-                val addNotableSuccessful = this.addNotableAndGetResult(notable)
+                val addNotableSuccessful = this.notables.add(notable)
             } while(addNotableSuccessful && ++trialCount <= 50)
         }
 
@@ -73,7 +76,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
             val noteLengths = NoteLength.fromTicks(this.ticksLeft)
             if (noteLengths != null) {
                 for (noteLength in noteLengths) {
-                    this.addNotableIgnoringResult(Rest(noteLength))
+                    this.notables.add(Rest(noteLength))
                 }
             }
         }
@@ -108,10 +111,10 @@ class Bar(timeSignature: TimeSignature? = null): TickType {
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var barCount: Int = 1,
                       var noteOverRestBias: Float = .5f,
-                      var fixedSeed: Long? = null) {
+                      var atomicBaseSeed: AtomicLong? = null) {
 
             val seed: Long
-                get() = fixedSeed ?: System.nanoTime()
+                get() = atomicBaseSeed?.andIncrement ?: System.nanoTime()
 
             fun validateOrThrow() {
                 assert(barCount > 0) { "options.barCount MUST BE > 0" }

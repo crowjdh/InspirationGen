@@ -10,6 +10,7 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Rest
 import org.junit.Test
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.test.assertEquals
 
 /**
@@ -26,7 +27,7 @@ class BarGenerationTest {
             TestTimeSignatures.forEachTimeSignature { timeSignature ->
                 val bar = Bar()
                 for (notable in notables) {
-                    if (!bar.addNotableAndGetResult(notable)) {
+                    if (!bar.notables.add(notable)) {
                         break
                     }
                 }
@@ -49,7 +50,7 @@ class BarGenerationTest {
     @Test
     fun createBar_seedFromZeroToOneHundred_shouldNotHaveLeftTicks() {
         for (i in 0..100) {
-            val bar = Bar.generate { fixedSeed = i.toLong() }[0]
+            val bar = Bar.generate { atomicBaseSeed = AtomicLong(i.toLong()) }[0]
 
             assertEquals(bar.ticksLeft, 0, "bar.ticks(): ${bar.ticks}, " +
                     "bar.ticksLeft: ${bar.ticksLeft}")
