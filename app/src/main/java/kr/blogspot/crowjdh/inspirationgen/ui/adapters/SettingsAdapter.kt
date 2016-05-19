@@ -1,5 +1,6 @@
 package kr.blogspot.crowjdh.inspirationgen.ui.adapters
 
+import android.support.annotation.IntDef
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -32,12 +33,6 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
             = database.all<Bar.Generator.Options>(Bar.Generator.Options::class).firstOrNull()
             ?: Bar.Generator.Options.default
 
-    interface OnItemClickListener {
-        fun onItemClick(index: Int, item: Sheet)
-    }
-
-    private var mOnItemClickListener: OnItemClickListener? = null
-
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SettingsViewHolder? {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.vh_setting, parent, false)
         return SettingsViewHolder(view)
@@ -49,7 +44,7 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
         val item = Settings.values()[position]
 
         showProperViews(holder, item)
-        applyItem(holder, item)
+        fillContents(holder, item)
         observeValueChanges(holder, item)
     }
 
@@ -59,7 +54,7 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
     }
 
     override fun getItemViewType(position: Int): Int {
-        return Settings.values()[position].type
+        return Settings.values()[position].valueType.toInt()
     }
 
     override fun getItemCount() = Settings.values().count()
@@ -68,21 +63,27 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
         holder.subscriptions.forEach { it.unsubscribe() }
     }
 
-    private fun applyItem(holder: SettingsViewHolder, item: Settings) {
-        holder.titleView.text = item.name
+    private fun showProperViews(holder: SettingsViewHolder, item: Settings) {
+        when (item.valueType) {
+            Settings.VALUE_TYPE_VALUE -> {
+                holder.valueView.visibility = View.VISIBLE
+            }
+            Settings.VALUE_TYPE_RADIO -> {
+                holder.valueView.visibility = View.GONE
+            }
+            else -> throw UnsupportedOperationException(
+                    "valueType ${item.valueType} not supported yet.")
+        }
+    }
+
+    private fun fillContents(holder: SettingsViewHolder, item: Settings) {
+        holder.titleView.text = item.title
         holder.valueView.setText(when (item) {
             Settings.BPM -> sheetOptions.bpm
             Settings.TIME_SIGNATURE_COUNT -> barOptions.timeSignature.count
             Settings.BAR_COUNT -> barOptions.barCount
             else -> null
         }?.toString())
-    }
-
-    private fun showProperViews(holder: SettingsViewHolder, item: Settings) {
-        holder.valueView.visibility = when (item.type) {
-            0 -> View.VISIBLE
-            else -> View.GONE
-        }
     }
 
     fun observeValueChanges(holder: SettingsViewHolder, item: Settings) {
@@ -101,16 +102,14 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
                         Settings.BAR_COUNT -> {{ barOptions.barCount = text.toInt() }}
                         else -> {{}}
                     }
-                    when (item) {
-                        Settings.BPM -> sheetOptions.insertOrUpdate { block() }
-                        else -> barOptions.insertOrUpdate { block() }
+                    when (item.settingsType) {
+                        Settings.SETTINGS_TYPE_SHEET -> sheetOptions.insertOrUpdate { block() }
+                        Settings.SETTINGS_TYPE_BAR -> barOptions.insertOrUpdate { block() }
+                        else -> throw UnsupportedOperationException(
+                                "settingsType ${item.settingsType} not supported yet.")
                     }
                 }
         holder.subscriptions.add(afterTextSubs)
-    }
-
-    fun setOnItemClickListener(listener: OnItemClickListener?) {
-        mOnItemClickListener = listener
     }
 
     class SettingsViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -120,12 +119,33 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
         var subscriptions: MutableList<Subscription> = mutableListOf()
     }
 
-    enum class Settings(val title: String, val type: Int) {
-        BPM("BPM", 0),
-        TIME_SIGNATURE_COUNT("Note Count Per Bar", 0),
-        TIME_SIGNATURE_NOTE_LENGTH("Note Length Per Bar", 1),
-        SCALE("Scale", 1),
-        BAR_COUNT("Bar Count", 0)
+    enum class Settings(val title: String,
+                        @ValueType val valueType: Long,
+                        @SettingsType val settingsType: Long) {
+        BPM("BPM", VALUE_TYPE_VALUE, SETTINGS_TYPE_SHEET),
+        TIME_SIGNATURE_COUNT("Note Count Per Bar", VALUE_TYPE_VALUE, SETTINGS_TYPE_BAR),
+        TIME_SIGNATURE_NOTE_LENGTH("Note Length Per Bar", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR),
+        SCALE("Scale", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR),
+        BAR_COUNT("Bar Count", VALUE_TYPE_VALUE, SETTINGS_TYPE_BAR);
+
+        companion object {
+
+            const val VALUE_TYPE_VALUE = 0L
+            const val VALUE_TYPE_RADIO = 1L
+
+            const val SETTINGS_TYPE_SHEET = 0L
+            const val SETTINGS_TYPE_BAR = 1L
+
+            @IntDef(VALUE_TYPE_VALUE, VALUE_TYPE_RADIO)
+            @Target(AnnotationTarget.VALUE_PARAMETER)
+            @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+            annotation class ValueType
+
+            @IntDef(SETTINGS_TYPE_SHEET, SETTINGS_TYPE_BAR)
+            @Target(AnnotationTarget.VALUE_PARAMETER)
+            @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+            annotation class SettingsType
+        }
     }
 
 }
