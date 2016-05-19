@@ -16,10 +16,7 @@ import kr.blogspot.crowjdh.inspirationgen.extensions.all
 import kr.blogspot.crowjdh.inspirationgen.extensions.database
 import kr.blogspot.crowjdh.inspirationgen.extensions.firstOrDefault
 import kr.blogspot.crowjdh.inspirationgen.extensions.insertOrUpdate
-import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
-import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
-import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
-import kr.blogspot.crowjdh.inspirationgen.music.models.TimeSignature
+import kr.blogspot.crowjdh.inspirationgen.music.models.*
 import rx.Subscription
 
 /**
@@ -93,6 +90,7 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
         }?.toString())
         holder.valueTextView.text = when (item) {
             Settings.TIME_SIGNATURE_NOTE_LENGTH -> barOptions.timeSignature.noteLength.name
+            Settings.PROGRAM -> barOptions.program.title
             else -> null
         }?.toString()
     }
@@ -114,6 +112,16 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
                         barOptions.timeSignature = TimeSignature(
                                 barOptions.timeSignature.count,
                                 NoteLength.values()[it])
+                    }
+                    notifyItemChanged(position)
+                }
+            }
+            Settings.PROGRAM -> {
+                radioItems = Program.values().map { it.title }.toTypedArray()
+                selectedIdx = { barOptions.program.ordinal }
+                onSelectBlock = {
+                    barOptions.insertOrUpdate {
+                        barOptions.program = Program.values()[it]
                     }
                     notifyItemChanged(position)
                 }
@@ -172,7 +180,8 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
         TIME_SIGNATURE_COUNT("Note Count Per Bar", VALUE_TYPE_VALUE, SETTINGS_TYPE_BAR),
         TIME_SIGNATURE_NOTE_LENGTH("Note Length Per Bar", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR),
         SCALE("Scale", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR),
-        BAR_COUNT("Bar Count", VALUE_TYPE_VALUE, SETTINGS_TYPE_BAR);
+        BAR_COUNT("Bar Count", VALUE_TYPE_VALUE, SETTINGS_TYPE_BAR),
+        PROGRAM("Midi Program", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR);
 
         companion object {
 

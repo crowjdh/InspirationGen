@@ -157,7 +157,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                     this.scale = Scale.default
                     this.noteLengthRange = NoteLengthRange.create(
                             Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
-                    this.program = Program.OVERDRIVEN_GUITAR
+                    this.program = Program.default
                 }
 
                 fun create(build: Options.() -> Unit): Options {
