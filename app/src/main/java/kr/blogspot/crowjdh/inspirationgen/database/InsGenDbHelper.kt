@@ -38,7 +38,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
     }
 
     companion object {
-        private val databaseVersion = 3
+        private val databaseVersion = 4
         private val invalidDatabaseVersion = -1
         private val databaseName = "InsGenDatabase"
 
@@ -54,6 +54,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
                 "CREATE TABLE " + Sheet.tableName + "(" +
                         Sheet._id       + type_autoIncrement + comma_sep +
                         Sheet.name      + type_text + comma_sep +
+                        Sheet.bpm       + type_int + comma_sep +
                         Sheet.barIds    + type_text +
                         " )"
         private val SQL_CREATE_BAR_ENTRY =

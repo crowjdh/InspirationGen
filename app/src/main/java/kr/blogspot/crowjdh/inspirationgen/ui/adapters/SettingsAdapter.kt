@@ -14,6 +14,7 @@ import com.jakewharton.rxbinding.widget.RxTextView
 import kr.blogspot.crowjdh.inspirationgen.R
 import kr.blogspot.crowjdh.inspirationgen.extensions.all
 import kr.blogspot.crowjdh.inspirationgen.extensions.database
+import kr.blogspot.crowjdh.inspirationgen.extensions.firstOrDefault
 import kr.blogspot.crowjdh.inspirationgen.extensions.insertOrUpdate
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
@@ -30,11 +31,11 @@ import rx.Subscription
 class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder>() {
 
     private val sheetOptions
-            = database.all<Sheet.Options>(Sheet.Options::class).firstOrNull()
-            ?: Sheet.Options.default
+            = database.all<Sheet.Options>(Sheet.Options::class)
+            .firstOrDefault(Sheet.Options.default)
     private val barOptions
-            = database.all<Bar.Generator.Options>(Bar.Generator.Options::class).firstOrNull()
-            ?: Bar.Generator.Options.default
+            = database.all<Bar.Generator.Options>(Bar.Generator.Options::class)
+            .firstOrDefault(Bar.Generator.Options.default)
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SettingsViewHolder? {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.vh_setting, parent, false)

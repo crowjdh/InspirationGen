@@ -14,9 +14,15 @@ const val DEFAULT_TPQN = 480
 class Sheet(override var _id: Long = Record.invalidId,
             var name: String = generateRandomName(),
             val bars: ArrayList<Bar> = arrayListOf(),
-            optionBuilder: Options.() -> Unit = {}): Record {
+            options: Options): Record {
 
-    var bpm: Int = Options.create(optionBuilder).bpm
+    constructor(_id: Long = Record.invalidId,
+                name: String = generateRandomName(),
+                bars: ArrayList<Bar> = arrayListOf(),
+                optionBuilder: Options.() -> Unit = {}): this(
+            _id, name, bars, Options.create(optionBuilder))
+
+    var bpm: Int = options.bpm
 
     override val records: List<Record>
         get() = bars

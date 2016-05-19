@@ -16,6 +16,7 @@ abstract class InsGenDbContract {
             val _id = "_id"
             override val tableName = "sheets"
             val name = "name"
+            val bpm = "bpm"
             val barIds = "bar_ids"
         }
     }

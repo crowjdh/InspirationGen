@@ -9,13 +9,12 @@ import android.view.MenuItem
 import butterknife.bindView
 import com.jakewharton.rxbinding.view.clicks
 import kr.blogspot.crowjdh.inspirationgen.R
-import kr.blogspot.crowjdh.inspirationgen.extensions.insert
-import kr.blogspot.crowjdh.inspirationgen.extensions.startActivity
+import kr.blogspot.crowjdh.inspirationgen.extensions.*
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
-import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
-import kr.blogspot.crowjdh.inspirationgen.music.models.Scale
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SheetHistoryAdapter
+import rx.Subscription
+import kotlin.properties.Delegates
 
 class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener {
 
@@ -25,6 +24,9 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
 
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
     private val mGenerateFab: FloatingActionButton by bindView(R.id.generate);
+    private var mSheetOptions: Sheet.Options by Delegates.notNull()
+    private var mBarOptions: Bar.Generator.Options by Delegates.notNull()
+    private val mSubscriptions: MutableList<Subscription> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,7 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
 
         initMidiPlayFragment()
         initActions()
+        observeGenerationOptions()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -45,6 +48,11 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
             R.id.action_settings -> startActivity(SettingsActivity::class)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unObserveAllSubscriptions()
     }
 
     private fun initMidiPlayFragment() {
@@ -60,15 +68,22 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
         }
     }
 
-    private fun generateRandomSheet(): Sheet {
-        val sheet = Sheet()
-        sheet.bars.addAll(Bar.generate {
-            barCount = 2
-            noteOverRestBias = .8f
-            scale = Scale.major(Scale.C4)
-            noteLengthRange = Bar.Generator.NoteLengthRange.create(
-                    Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
+    private fun observeGenerationOptions() {
+        mSubscriptions.add(database.observeTable<Sheet.Options>(Sheet.Options::class) {
+            mSheetOptions = it.firstOrDefault(Sheet.Options.default)
         })
+        mSubscriptions.add(database.observeTable<Bar.Generator.Options>(Bar.Generator.Options::class) {
+            mBarOptions = it.firstOrDefault(Bar.Generator.Options.default)
+        })
+    }
+
+    private fun unObserveAllSubscriptions() {
+        mSubscriptions.forEach { it.unsubscribe() }
+    }
+
+    private fun generateRandomSheet(): Sheet {
+        val sheet = Sheet(options = mSheetOptions)
+        sheet.bars.addAll(Bar.generate(mBarOptions))
 
         return sheet
     }
