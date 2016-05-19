@@ -25,6 +25,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
         targetTicks <= this.timeSignature.capableTicks()
     }
     val notables = FilterArrayList(filter)
+    var program = Program.default
 
     val ticksLeft: Long
         get() = this.timeSignature.capableTicks() - ticks
@@ -36,7 +37,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
         get() = null
 
     override fun hashCode(): Int {
-        return hashCodeWith(_id, this.timeSignature, notables)
+        return hashCodeWith(_id, this.timeSignature, notables, program)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -46,6 +47,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
         return other._id.equals(this._id)
                 && other.timeSignature.equals(this.timeSignature)
                 && other.notables.equals(this.notables)
+                && other.program.equals(this.program)
     }
 
     companion object Generator {
@@ -56,6 +58,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
             val bars = mutableListOf<Bar>()
             for (i in 1..options.barCount) {
                 val bar = Bar(options.timeSignature)
+                bar.program = options.program
                 bar.fillWithGeneratedNotables(options)
                 bar.fillEmptyTicksWithRests()
                 bars.add(bar)
@@ -111,6 +114,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var barCount: Int = 1,
                       var noteOverRestBias: Float = .5f,
+                      var program: Program = Program.default,
                       var atomicBaseSeed: AtomicLong? = null): Record {
 
             override var _id: Long = Record.invalidId
@@ -121,7 +125,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
 
             override fun hashCode(): Int {
                 return hashCodeWith(_id, timeSignature, scale, noteLengthRange,
-                        barCount, noteOverRestBias, atomicBaseSeed)
+                        barCount, noteOverRestBias, program, atomicBaseSeed)
             }
 
             override fun equals(other: Any?): Boolean {
@@ -134,6 +138,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                         && other.noteLengthRange.equals(this.noteLengthRange)
                         && other.barCount.equals(this.barCount)
                         && other.noteOverRestBias.equals(this.noteOverRestBias)
+                        && other.program.equals(this.program)
                         && other.atomicBaseSeed?.get() == this.atomicBaseSeed?.get()
             }
 
@@ -152,6 +157,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                     this.scale = Scale.default
                     this.noteLengthRange = NoteLengthRange.create(
                             Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
+                    this.program = Program.OVERDRIVEN_GUITAR
                 }
 
                 fun create(build: Options.() -> Unit): Options {

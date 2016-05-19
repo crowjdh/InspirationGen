@@ -38,7 +38,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
     }
 
     companion object {
-        private val databaseVersion = 5
+        private val databaseVersion = 6
         private val invalidDatabaseVersion = -1
         private val databaseName = "InsGenDatabase"
 
@@ -63,7 +63,8 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
                         Bar._id                     + type_autoIncrement + comma_sep +
                         Bar.encodedNotables         + type_text + comma_sep +
                         Bar.timeSignatureCount      + type_int + comma_sep +
-                        Bar.timeSignatureNoteLength + type_int +
+                        Bar.timeSignatureNoteLength + type_int + comma_sep +
+                        Bar.program                 + type_int +
                         " )"
         private val SQL_CREATE_SHEET_OPTIONS_ENTRY =
                 "CREATE TABLE " + SheetOptions.tableName + "(" +
@@ -78,6 +79,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
                         BarOptions.noteLengthRange  + type_text + comma_sep +
                         BarOptions.barCount         + type_text + comma_sep +
                         BarOptions.noteOverRestBias + type_text + comma_sep +
+                        BarOptions.program          + type_text + comma_sep +
                         BarOptions.atomicBaseSeed   + type_text +
                         " )"
     }

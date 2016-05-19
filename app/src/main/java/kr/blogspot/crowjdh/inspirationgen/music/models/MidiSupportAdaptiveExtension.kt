@@ -5,6 +5,7 @@ import kr.blogspot.crowjdh.midisupport.MidiTrack
 import kr.blogspot.crowjdh.midisupport.event.MidiEvent
 import kr.blogspot.crowjdh.midisupport.event.NoteOff
 import kr.blogspot.crowjdh.midisupport.event.NoteOn
+import kr.blogspot.crowjdh.midisupport.event.ProgramChange
 import kr.blogspot.crowjdh.midisupport.event.meta.Tempo
 
 /**
@@ -26,6 +27,8 @@ fun TimeSignature.toMidiTimeSignature(): kr.blogspot.crowjdh.midisupport.event.m
     return midiTimeSignature
 }
 
+fun Program.toMidiEvent() = ProgramChange(0L, 0, number)
+
 fun Sheet.toMidiFile(): MidiFile {
     val track = MidiTrack()
     val tempo = Tempo()
@@ -45,6 +48,7 @@ fun Sheet.toMidiFile(): MidiFile {
 fun Bar.toEachMidiEvents(startTicks: Long = 0L, block: (event: MidiEvent, ticks: Long) -> Unit) {
     // TODO: Consider reducing redundant time signatures
     block(timeSignature.toMidiTimeSignature(), 0L)
+    block(program.toMidiEvent(), 0L)
     var accumulatedTicks = 0L
     notables.forEach {
         it.toMidiOnOffNotes(startTicks + accumulatedTicks) { on, off ->

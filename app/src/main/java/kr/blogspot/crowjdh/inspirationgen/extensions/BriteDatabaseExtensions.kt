@@ -150,6 +150,7 @@ private val barToContentValuesMapper: (bar: Bar) -> ContentValues = {
     values.put(InsGenDbContract.Bar.timeSignatureCount, it.timeSignature.count)
     values.put(InsGenDbContract.Bar.timeSignatureNoteLength, it.timeSignature.noteLength.length)
     values.put(InsGenDbContract.Bar.encodedNotables, Notable.encode(it.notables))
+    values.put(InsGenDbContract.Bar.program, it.program.ordinal)
     values
 }
 
@@ -163,6 +164,8 @@ private val cursorToBarMapper: (cursor: Cursor) -> Bar = {
 
     val encodedNotables = it.getString(InsGenDbContract.Bar.encodedNotables)
     Notable.decodeNotables(encodedNotables).forEach { bar.notables.add(it) }
+
+    bar.program = Program.values()[it.getInt(InsGenDbContract.Bar.program)]
 
     bar
 }
@@ -189,6 +192,7 @@ private val barOptionsToContentValuesMapper: (options: Bar.Generator.Options) ->
     values.put(InsGenDbContract.BarOptions.noteLengthRange, it.noteLengthRange.toGsonString())
     values.put(InsGenDbContract.BarOptions.barCount, it.barCount.toGsonString())
     values.put(InsGenDbContract.BarOptions.noteOverRestBias, it.noteOverRestBias.toGsonString())
+    values.put(InsGenDbContract.BarOptions.program, it.program.toGsonString())
     values.put(InsGenDbContract.BarOptions.atomicBaseSeed, it.atomicBaseSeed?.toGsonString())
     values
 }
@@ -201,6 +205,7 @@ private val cursorToBarOptionsMapper: (cursor: Cursor) -> Bar.Generator.Options 
         noteLengthRange = it.getString(InsGenDbContract.BarOptions.noteLengthRange).fromGsonString()
         barCount = it.getString(InsGenDbContract.BarOptions.barCount).fromGsonString()
         noteOverRestBias = it.getString(InsGenDbContract.BarOptions.noteOverRestBias).fromGsonString()
+        program = it.getString(InsGenDbContract.BarOptions.program).fromGsonString()
         atomicBaseSeed = it.getString(InsGenDbContract.BarOptions.atomicBaseSeed).fromGsonString()
     }
 }

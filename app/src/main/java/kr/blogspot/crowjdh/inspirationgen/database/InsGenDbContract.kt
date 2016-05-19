@@ -29,6 +29,7 @@ abstract class InsGenDbContract {
             val timeSignatureCount = "time_signature_count"
             val timeSignatureNoteLength = "time_signature_note_length"
             val encodedNotables = "encoded_notables"
+            val program = "program"
         }
     }
 
@@ -49,6 +50,7 @@ abstract class InsGenDbContract {
             val noteLengthRange = "note_length_range"
             val barCount = "bar_count"
             val noteOverRestBias = "note_over_rest_bias"
+            val program = "program"
             val atomicBaseSeed = "atomic_base_seed"
         }
     }
