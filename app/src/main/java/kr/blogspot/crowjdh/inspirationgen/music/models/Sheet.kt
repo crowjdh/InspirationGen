@@ -14,13 +14,15 @@ const val DEFAULT_TPQN = 480
 class Sheet(override var _id: Long = Record.invalidId,
             var name: String = generateRandomName(),
             val bars: ArrayList<Bar> = arrayListOf(),
+            var pinned: Boolean = false,
             options: Options): Record {
 
     constructor(_id: Long = Record.invalidId,
                 name: String = generateRandomName(),
                 bars: ArrayList<Bar> = arrayListOf(),
+                pinned: Boolean = false,
                 optionBuilder: Options.() -> Unit = {}): this(
-            _id, name, bars, Options.create(optionBuilder))
+            _id, name, bars, pinned, Options.create(optionBuilder))
 
     var bpm: Int = options.bpm
 
@@ -28,7 +30,7 @@ class Sheet(override var _id: Long = Record.invalidId,
         get() = bars
 
     override fun hashCode(): Int {
-        return hashCodeWith(_id, name, bars)
+        return hashCodeWith(_id, name, bars, pinned)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -38,6 +40,7 @@ class Sheet(override var _id: Long = Record.invalidId,
         return other._id.equals(this._id)
                 && other.name.equals(this.name)
                 && other.bars.equals(this.bars)
+                && other.pinned.equals(this.pinned)
     }
 
     class Options(var bpm: Int = 120): Record {

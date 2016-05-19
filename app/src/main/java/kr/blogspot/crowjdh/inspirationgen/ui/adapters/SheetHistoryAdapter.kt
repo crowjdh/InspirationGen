@@ -1,5 +1,7 @@
 package kr.blogspot.crowjdh.inspirationgen.ui.adapters
 
+import android.app.AlertDialog
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,9 +10,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.bindView
 import com.jakewharton.rxbinding.view.clicks
+import com.jakewharton.rxbinding.view.longClicks
 import kr.blogspot.crowjdh.inspirationgen.R
 import kr.blogspot.crowjdh.inspirationgen.extensions.database
 import kr.blogspot.crowjdh.inspirationgen.extensions.observeTable
+import kr.blogspot.crowjdh.inspirationgen.extensions.update
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 
 /**
@@ -23,7 +27,7 @@ class SheetHistoryAdapter(): RecyclerView.Adapter<SheetHistoryAdapter.SheetHisto
 
     init {
         database.observeTable<Sheet>(Sheet::class) {
-            mSheets = it
+            mSheets = it.reversed().sortedBy { !it.pinned }
             notifyDataSetChanged()
         }
     }
@@ -44,8 +48,35 @@ class SheetHistoryAdapter(): RecyclerView.Adapter<SheetHistoryAdapter.SheetHisto
     override fun onBindViewHolder(holder: SheetHistoryViewHolder?, position: Int) {
         val item = mSheets[position]
 
-        holder!!.numberView.text = position.toString()
+        fillContents(holder!!, item, position)
+        setActions(holder, item, position)
+    }
+
+    private fun fillContents(holder: SheetHistoryViewHolder, item: Sheet, position: Int) {
+        holder.numberView.text = position.toString()
         holder.contentView.text = item.name
+        holder.contentView.setTextColor(
+                if (item.pinned) {
+                    Color.parseColor("#aa4444")
+                } else {
+                    holder.numberView.textColors.defaultColor
+                })
+    }
+
+    private fun setActions(holder: SheetHistoryViewHolder, item: Sheet, position: Int) {
+        val itemName = holder.rootView.context.resources.getString(
+                if (item.pinned) R.string.unpin else R.string.pin
+        )
+        holder.rootView.longClicks().subscribe {
+            AlertDialog.Builder(holder.rootView.context)
+                    .setTitle(R.string.actions)
+                    .setItems(arrayOf(itemName)) { dialog, index ->
+                        item.update {
+                            pinned = !pinned
+                        }
+                    }
+                    .show()
+        }
         holder.playButton.clicks().subscribe { mOnItemClickListener?.onItemClick(position, item) }
     }
 
@@ -57,6 +88,7 @@ class SheetHistoryAdapter(): RecyclerView.Adapter<SheetHistoryAdapter.SheetHisto
 
     class SheetHistoryViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
+        val rootView: View by bindView(R.id.rootView)
         val numberView: TextView by bindView(R.id.number)
         val contentView: TextView by bindView(R.id.content)
         val playButton: ImageView by bindView(R.id.play)

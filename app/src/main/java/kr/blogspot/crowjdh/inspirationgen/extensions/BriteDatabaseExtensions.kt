@@ -120,6 +120,7 @@ private val sheetToContentValuesMapper: (sheet: Sheet) -> ContentValues = {
     val barIds = it.bars.fold("") { prev, cur -> "$prev,${cur._id}" }
     values.put(InsGenDbContract.Sheet.bpm, it.bpm)
     values.put(InsGenDbContract.Sheet.barIds, barIds)
+    values.put(InsGenDbContract.Sheet.pinned, it.pinned.toInt())
 
     values
 }
@@ -129,6 +130,7 @@ private val cursorToSheetMapper: (cursor: Cursor) -> Sheet = {
     sheet._id = it.getLong(InsGenDbContract.Sheet._id)
     sheet.bpm = it.getInt(InsGenDbContract.Sheet.bpm)
     sheet.name = it.getString(InsGenDbContract.Sheet.name)
+    sheet.pinned = it.getInt(InsGenDbContract.Sheet.pinned).toBoolean()
 
     val barIds = it.getString(InsGenDbContract.Sheet.barIds).split(',')
             .filter { it.length > 0 }.map { it.toLong() }

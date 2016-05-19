@@ -18,6 +18,7 @@ abstract class InsGenDbContract {
             val name = "name"
             val bpm = "bpm"
             val barIds = "bar_ids"
+            val pinned = "pinned"
         }
     }
 
