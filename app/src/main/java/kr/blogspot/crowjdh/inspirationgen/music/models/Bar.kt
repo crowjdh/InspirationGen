@@ -149,7 +149,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                 val default = create {
                     this.barCount = 2
                     this.noteOverRestBias = .8f
-                    this.scale = Scale.major(Scale.C4)
+                    this.scale = Scale.default
                     this.noteLengthRange = NoteLengthRange.create(
                             Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
                 }

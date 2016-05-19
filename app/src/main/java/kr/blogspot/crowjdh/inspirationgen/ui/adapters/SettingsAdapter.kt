@@ -1,5 +1,6 @@
 package kr.blogspot.crowjdh.inspirationgen.ui.adapters
 
+import android.app.AlertDialog
 import android.support.annotation.IntDef
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,12 +9,14 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import butterknife.bindView
+import com.jakewharton.rxbinding.view.clicks
 import com.jakewharton.rxbinding.widget.RxTextView
 import kr.blogspot.crowjdh.inspirationgen.R
 import kr.blogspot.crowjdh.inspirationgen.extensions.all
 import kr.blogspot.crowjdh.inspirationgen.extensions.database
 import kr.blogspot.crowjdh.inspirationgen.extensions.insertOrUpdate
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
+import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import kr.blogspot.crowjdh.inspirationgen.music.models.TimeSignature
 import rx.Subscription
@@ -45,6 +48,7 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
 
         showProperViews(holder, item)
         fillContents(holder, item)
+        setActions(holder, item, position)
         observeValueChanges(holder, item)
     }
 
@@ -66,10 +70,12 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
     private fun showProperViews(holder: SettingsViewHolder, item: Settings) {
         when (item.valueType) {
             Settings.VALUE_TYPE_VALUE -> {
-                holder.valueView.visibility = View.VISIBLE
+                holder.valueEditText.visibility = View.VISIBLE
+                holder.valueTextView.visibility = View.GONE
             }
             Settings.VALUE_TYPE_RADIO -> {
-                holder.valueView.visibility = View.GONE
+                holder.valueEditText.visibility = View.GONE
+                holder.valueTextView.visibility = View.VISIBLE
             }
             else -> throw UnsupportedOperationException(
                     "valueType ${item.valueType} not supported yet.")
@@ -78,16 +84,52 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
 
     private fun fillContents(holder: SettingsViewHolder, item: Settings) {
         holder.titleView.text = item.title
-        holder.valueView.setText(when (item) {
+        holder.valueEditText.setText(when (item) {
             Settings.BPM -> sheetOptions.bpm
             Settings.TIME_SIGNATURE_COUNT -> barOptions.timeSignature.count
             Settings.BAR_COUNT -> barOptions.barCount
             else -> null
         }?.toString())
+        holder.valueTextView.text = when (item) {
+            Settings.TIME_SIGNATURE_NOTE_LENGTH -> barOptions.timeSignature.noteLength.name
+            else -> null
+        }?.toString()
     }
 
-    fun observeValueChanges(holder: SettingsViewHolder, item: Settings) {
-        val afterTextSubs = RxTextView.afterTextChangeEvents(holder.valueView)
+    private fun setActions(holder: SettingsViewHolder, item: Settings, position: Int) {
+        if (item.valueType != Settings.VALUE_TYPE_RADIO) {
+            return
+        }
+        val radioItems: Array<String>?
+        val selectedIdx: (() -> Int)?
+        val onSelectBlock: ((Int) -> Unit)?
+
+        when (item) {
+            Settings.TIME_SIGNATURE_NOTE_LENGTH -> {
+                radioItems = NoteLength.values().map { it.name }.toTypedArray()
+                selectedIdx = { barOptions.timeSignature.noteLength.ordinal }
+                onSelectBlock = {
+                    barOptions.insertOrUpdate {
+                        barOptions.timeSignature = TimeSignature(
+                                barOptions.timeSignature.count,
+                                NoteLength.values()[it])
+                    }
+                    notifyItemChanged(position)
+                }
+            }
+            else -> return
+        }
+
+        holder.rootView.clicks().subscribe {
+            AlertDialog.Builder(holder.titleView.context)
+                    .setTitle(item.title)
+                    .setSingleChoiceItems(radioItems, selectedIdx(),
+                            { dialog, i -> onSelectBlock(i) }).show()
+        }
+    }
+
+    private fun observeValueChanges(holder: SettingsViewHolder, item: Settings) {
+        val afterTextSubs = RxTextView.afterTextChangeEvents(holder.valueEditText)
                 .filter { it.editable().length > 0 }
                 .map { it.editable().toString() }
                 .subscribe { text ->
@@ -114,8 +156,11 @@ class SettingsAdapter(): RecyclerView.Adapter<SettingsAdapter.SettingsViewHolder
 
     class SettingsViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
+        val rootView: View by bindView(R.id.root_view)
         val titleView: TextView by bindView(R.id.number)
-        val valueView: EditText by bindView(R.id.value)
+        val valueEditText: EditText by bindView(R.id.value_edit_text)
+        val valueTextView: TextView by bindView(R.id.value_text_view)
+
         var subscriptions: MutableList<Subscription> = mutableListOf()
     }
 

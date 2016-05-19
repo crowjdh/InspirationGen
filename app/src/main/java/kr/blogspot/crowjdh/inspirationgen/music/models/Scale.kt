@@ -20,6 +20,7 @@ class Scale(val pitches: List<Int>) {
         val C4 = 60
 
         val CHROMATIC = Scale(60..72)
+        val default = major(Scale.C4)
 
         fun major(base: Int) = Scale(majorDiffs.toPrefixSum().map { it + base })
         fun minor(base: Int) = Scale(minorDiffs.toPrefixSum().map { it + base })
