@@ -15,7 +15,7 @@ val <T: Record> T.isInDatabase: Boolean
 fun <T: Record> T.insert() {
     if (!isInDatabase) {
         records?.forEach { it.insert() }
-        InspirationGenDatabase.get().insert(this, javaClass.kotlin)
+        database.insert(this, javaClass.kotlin)
     }
 }
 
@@ -53,13 +53,22 @@ fun <T: Record> T.update(block: (T.() -> Unit)? = null) {
     } else {
         refinedBlock()
     }
-    InspirationGenDatabase.get().update(this, javaClass.kotlin)
+    database.update(this, javaClass.kotlin)
+}
+
+fun <T: Record> T.insertOrUpdate(block: (T.() -> Unit)? = null) {
+    if (isInDatabase) {
+        update(block)
+    } else {
+        block?.invoke(this)
+        insert()
+    }
 }
 
 fun <T: Record> T.delete() {
     if (isInDatabase) {
         records?.forEach { it.delete() }
-        InspirationGenDatabase.get().delete(this, javaClass.kotlin)
+        database.delete(this, javaClass.kotlin)
     }
     _id = Record.invalidId
 }

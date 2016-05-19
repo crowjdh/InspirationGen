@@ -57,6 +57,8 @@ class Sheet(override var _id: Long = Record.invalidId,
 
         companion object Factory {
 
+            val default = create { }
+
             fun create(build: Options.() -> Unit): Options {
                 val options = Options()
                 options.build()

@@ -24,4 +24,15 @@ class Scale(val pitches: List<Int>) {
         fun major(base: Int) = Scale(majorDiffs.toPrefixSum().map { it + base })
         fun minor(base: Int) = Scale(minorDiffs.toPrefixSum().map { it + base })
     }
+
+    override fun hashCode(): Int {
+        return pitches.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Scale) {
+            return false
+        }
+        return other.pitches.equals(this.pitches)
+    }
 }

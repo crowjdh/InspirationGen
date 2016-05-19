@@ -9,7 +9,7 @@ import android.widget.TextView
 import butterknife.bindView
 import com.jakewharton.rxbinding.view.clicks
 import kr.blogspot.crowjdh.inspirationgen.R
-import kr.blogspot.crowjdh.inspirationgen.extensions.InspirationGenDatabase
+import kr.blogspot.crowjdh.inspirationgen.extensions.database
 import kr.blogspot.crowjdh.inspirationgen.extensions.observeTable
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 
@@ -22,7 +22,7 @@ import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 class SheetHistoryAdapter(): RecyclerView.Adapter<SheetHistoryAdapter.SheetHistoryViewHolder>() {
 
     init {
-        InspirationGenDatabase.get().observeTable<Sheet>(Sheet::class) {
+        database.observeTable<Sheet>(Sheet::class) {
             mSheets = it
             notifyDataSetChanged()
         }

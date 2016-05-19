@@ -13,7 +13,7 @@ import kotlin.properties.Delegates
 class SettingsActivity : AppCompatActivity() {
 
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
-    private val mSheetHistoryRecyclerView: RecyclerView by bindView(R.id.settings)
+    private val mSettingsRecyclerView: RecyclerView by bindView(R.id.settings)
     private var mLayoutManager: LinearLayoutManager by Delegates.notNull()
     private var mAdapter = SettingsAdapter()
 
@@ -23,7 +23,7 @@ class SettingsActivity : AppCompatActivity() {
         setSupportActionBar(mToolbar)
 
         mLayoutManager = LinearLayoutManager(applicationContext)
-        mSheetHistoryRecyclerView.layoutManager = mLayoutManager
-        mSheetHistoryRecyclerView.adapter = mAdapter
+        mSettingsRecyclerView.layoutManager = mLayoutManager
+        mSettingsRecyclerView.adapter = mAdapter
     }
 }

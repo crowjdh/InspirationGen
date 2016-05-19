@@ -25,6 +25,9 @@ private val TAG = "BriteDatabaseExtensions"
 
 private fun selectSql(tableName: String) = "SELECT * FROM $tableName"
 
+val database: BriteDatabase
+    get() = InspirationGenDatabase.get()
+
 fun <T: Record> BriteDatabase.observeTable(clazz: KClass<*>, onNext: (it: List<T>) -> Unit)
         : Subscription {
     val mapperMeta = getMapperOf<T>(clazz)
@@ -40,8 +43,8 @@ fun <T: Record> BriteDatabase.tableObservable(clazz: KClass<*>)
     val mapperMeta = getMapperOf<T>(clazz)
 
     val observable = createQuery(mapperMeta.tableName, selectSql(mapperMeta.tableName))
-    // TODO: Consider adding distinct filter
     return observable.mapToList { cursor -> mapperMeta.cursorToTypeMapper(cursor) }
+            .distinctUntilChanged { it.hashCode() }
 }
 
 fun <T: Record> BriteDatabase.insert(item: T, clazz: KClass<*>) {
@@ -128,7 +131,7 @@ private val cursorToSheetMapper: (cursor: Cursor) -> Sheet = {
     val barIds = it.getString(InsGenDbContract.Sheet.barIds).split(',')
             .filter { it.length > 0 }.map { it.toLong() }
     for (barId in barIds) {
-        val bar = InspirationGenDatabase.get().select<Bar>(Bar::class, barId)
+        val bar = database.select<Bar>(Bar::class, barId)
         if (bar != null) {
             sheet.bars.add(bar)
         }

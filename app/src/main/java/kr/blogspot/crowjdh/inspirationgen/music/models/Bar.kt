@@ -145,6 +145,15 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
             }
 
             companion object Factory {
+
+                val default = create {
+                    this.barCount = 2
+                    this.noteOverRestBias = .8f
+                    this.scale = Scale.major(Scale.C4)
+                    this.noteLengthRange = NoteLengthRange.create(
+                            Pair(NoteLength.QUARTER, 20), Pair(NoteLength.EIGHTH, 80))
+                }
+
                 fun create(build: Options.() -> Unit): Options {
                     val options = Options()
                     options.build()

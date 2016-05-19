@@ -55,8 +55,6 @@ class SqlBriteTest():
 
     private fun clearDatabase() {
         super.setUp()
-        val database = InspirationGenDatabase.get()
-
         database.delete(getMapperOf<Sheet>(Sheet::class).tableName, null)
         database.delete(getMapperOf<Bar>(Bar::class).tableName, null)
         database.delete(getMapperOf<Sheet.Options>(Sheet.Options::class).tableName, null)
@@ -65,7 +63,7 @@ class SqlBriteTest():
 
     @Test
     fun test() {
-        InspirationGenDatabase.get().observeTable<Sheet>(Sheet::class) {
+        database.observeTable<Sheet>(Sheet::class) {
             var message = "it.count: ${it.count()}"
             if (it.count() > 0) {
                 message += ", it.first().name: ${it.first().name}"
@@ -97,7 +95,7 @@ class SqlBriteTest():
         Observable.just(1, 2, 3, 4).takeUntil { stop.get() }.doOnNext { stop.set(true) }.subscribe {
             Log.i(TAG, "1, 2, 3, 4. This message will be displayed only once.")
         }
-        InspirationGenDatabase.get().tableObservable<Sheet>(Sheet::class)
+        database.tableObservable<Sheet>(Sheet::class)
                 .takeUntil { stopTwo.get() }.doOnNext { stopTwo.set(true) }.subscribe {
             Log.i(TAG, "tableObservable. This message will be displayed only once.")
         }
@@ -133,8 +131,8 @@ class SqlBriteTest():
 
         sheet.delete()
 
-        val sheetCount = InspirationGenDatabase.get().all<Sheet>(Sheet::class).count()
-        val barCount = InspirationGenDatabase.get().all<Bar>(Bar::class).count()
+        val sheetCount = database.all<Sheet>(Sheet::class).count()
+        val barCount = database.all<Bar>(Bar::class).count()
         assertEquals(0, sheetCount)
         assertEquals(0, barCount)
     }
@@ -162,7 +160,7 @@ class SqlBriteTest():
     }
 
     private inline fun <reified T: Record> assertEqualsToSavedRecord(record: T) {
-        val selectedSheet = InspirationGenDatabase.get().select<T>(T::class, record._id)
+        val selectedSheet = database.select<T>(T::class, record._id)
         assertEquals(record, selectedSheet)
     }
 }

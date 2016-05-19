@@ -9,7 +9,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="#0ff"
+        android:textSize="@dimen/vh_settings_editText_textSize"
+        android:gravity="center"
         android:inputType="numberSigned"/>
 
     <TextView
@@ -21,6 +22,5 @@
         android:layout_toLeftOf="@id/value"
         android:layout_toStartOf="@id/value"
         android:padding="@dimen/vh_settings_row_padding"
-        android:background="#ff0"
         android:gravity="center|start"/>
 </RelativeLayout>
