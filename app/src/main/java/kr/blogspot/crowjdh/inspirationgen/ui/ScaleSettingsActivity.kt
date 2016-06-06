@@ -19,7 +19,7 @@ class ScaleSettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scale_settings)
+        setContentView(R.layout.activity_settings_scale)
         setSupportActionBar(mToolbar)
 
         mLayoutManager = LinearLayoutManager(applicationContext)
