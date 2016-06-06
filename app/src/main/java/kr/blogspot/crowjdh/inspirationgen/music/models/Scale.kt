@@ -14,7 +14,7 @@ private const val PITCH_C4 = 60
 class Scale(val key: Key,
             val intervals: Intervals) {
 
-    companion object Factory {
+    companion object {
         val default = Scale(Key.C, Intervals.MAJOR)
     }
 
