@@ -38,7 +38,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
     }
 
     companion object {
-        private val databaseVersion = 6
+        private val databaseVersion = 7
         private val invalidDatabaseVersion = -1
         private val databaseName = "InsGenDatabase"
 

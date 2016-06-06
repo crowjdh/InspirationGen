@@ -110,7 +110,7 @@ class Bar(timeSignature: TimeSignature? = null): TickType, Record {
                 = list[Random(seed).nextInt(list.count())]
 
         class Options(var timeSignature: TimeSignature = TimeSignature.createDefault(),
-                      var scale: Scale = Scale(60..72),
+                      var scale: Scale = Scale.default,
                       var noteLengthRange: NoteLengthRange = NoteLengthRange.createDefault(),
                       var barCount: Int = 1,
                       var noteOverRestBias: Float = .5f,

@@ -19,7 +19,7 @@ class GsonTest {
     fun encodeAndDecodeBarGeneratorOptions_equals() {
         val options = Bar.Generator.Options.create {
             timeSignature = TimeSignature(3, NoteLength.HALF)
-            scale = Scale(80..81)
+            scale = Scale.default
             barCount = 2
             noteOverRestBias = .8f
             noteLengthRange = Bar.Generator.NoteLengthRange.create(

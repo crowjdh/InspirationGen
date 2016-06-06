@@ -7,23 +7,23 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import butterknife.bindView
 import kr.blogspot.crowjdh.inspirationgen.R
-import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SettingsAdapter
+import kr.blogspot.crowjdh.inspirationgen.ui.adapters.ScaleSettingsAdapter
 import kotlin.properties.Delegates
 
-class SettingsActivity : AppCompatActivity() {
+class ScaleSettingsActivity : AppCompatActivity() {
 
     private val mToolbar: Toolbar by bindView(R.id.toolbar)
-    private val mSettingsRecyclerView: RecyclerView by bindView(R.id.settings)
+    private val mScaleSettingsRecyclerView: RecyclerView by bindView(R.id.scale_settings)
     private var mLayoutManager: LinearLayoutManager by Delegates.notNull()
-    private var mAdapter = SettingsAdapter()
+    private var mAdapter = ScaleSettingsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        setContentView(R.layout.activity_settings_scale)
         setSupportActionBar(mToolbar)
 
         mLayoutManager = LinearLayoutManager(applicationContext)
-        mSettingsRecyclerView.layoutManager = mLayoutManager
-        mSettingsRecyclerView.adapter = mAdapter
+        mScaleSettingsRecyclerView.layoutManager = mLayoutManager
+        mScaleSettingsRecyclerView.adapter = mAdapter
     }
 }
