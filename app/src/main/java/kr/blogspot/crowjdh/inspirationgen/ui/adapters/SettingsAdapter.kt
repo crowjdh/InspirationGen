@@ -71,6 +71,10 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
                 holder.valueEditText.visibility = View.GONE
                 holder.valueTextView.visibility = View.VISIBLE
             }
+            Settings.VALUE_TYPE_CUSTOM -> {
+                holder.valueEditText.visibility = View.GONE
+                holder.valueTextView.visibility = View.GONE
+            }
             else -> throw UnsupportedOperationException(
                     "valueType ${item.valueType} not supported yet.")
         }
@@ -83,30 +87,34 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
         when (item.valueType) {
             Settings.VALUE_TYPE_VALUE -> holder.valueEditText.setText(getContents(item))
             Settings.VALUE_TYPE_RADIO -> holder.valueTextView.text = getContents(item)
+            Settings.VALUE_TYPE_CUSTOM -> {}
             else -> throw UnsupportedOperationException(
                     "valueType ${item.valueType} not supported yet.")
         }
     }
 
     private fun setActions(holder: SettingsViewHolder, item: T, position: Int) {
-        holder.rootView.clicks().subscribe {  }
-        if (item.valueType != Settings.VALUE_TYPE_RADIO) {
-            return
-        }
+        if (item.valueType == Settings.VALUE_TYPE_RADIO) {
+            holder.rootView.clicks().subscribe {
+                val titles = getRadioTitles(item)
+                val index = getSelectedRadioIndex(item)
 
-        holder.rootView.clicks().subscribe {
-            val titles = getRadioTitles(item)
-            val index = getSelectedRadioIndex(item)
-
-            if (titles == null || index == null) {
-                return@subscribe
+                if (titles == null || index == null) {
+                    return@subscribe
+                }
+                AlertDialog.Builder(holder.titleView.context)
+                        .setTitle(item.title)
+                        .setSingleChoiceItems(titles, index, { dialog, i ->
+                            onSelectRadio(item, i)
+                            notifyItemChanged(position)
+                        }).show()
             }
-            AlertDialog.Builder(holder.titleView.context)
-                    .setTitle(item.title)
-                    .setSingleChoiceItems(titles, index, { dialog, i ->
-                        onSelectRadio(item, i)
-                        notifyItemChanged(position)
-                    }).show()
+        } else if (item.valueType == Settings.VALUE_TYPE_CUSTOM) {
+            holder.rootView.clicks().subscribe {
+                onCustomAction(holder, item, position)
+            }
+        } else {
+            holder.rootView.clicks().subscribe {  }
         }
     }
 
@@ -134,6 +142,7 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
     abstract fun getRadioTitles(item: T): Array<String>?
     abstract fun getSelectedRadioIndex(item: T): Int?
     abstract fun onSelectRadio(item: T, index: Int)
+    abstract fun onCustomAction(holder: SettingsViewHolder, item: T, index: Int)
     abstract fun insertOrUpdateOnValueChange(item: T, text: String)
 
     class SettingsViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -156,11 +165,12 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
 
             const val VALUE_TYPE_VALUE = 0L
             const val VALUE_TYPE_RADIO = 1L
+            const val VALUE_TYPE_CUSTOM = 2L
 
             const val SETTINGS_TYPE_SHEET = 0L
             const val SETTINGS_TYPE_BAR = 1L
 
-            @IntDef(VALUE_TYPE_VALUE, VALUE_TYPE_RADIO)
+            @IntDef(VALUE_TYPE_VALUE, VALUE_TYPE_RADIO, VALUE_TYPE_CUSTOM)
             @Target(AnnotationTarget.VALUE_PARAMETER)
             @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
             annotation class ValueType
