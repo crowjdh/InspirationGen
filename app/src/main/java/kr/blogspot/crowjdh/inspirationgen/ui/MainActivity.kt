@@ -46,6 +46,8 @@ class MainActivity: AppCompatActivity(), SheetHistoryAdapter.OnItemClickListener
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.action_settings -> startActivity(SettingsActivity::class)
+            R.id.action_delete_unpinned -> database.all<Sheet>(Sheet::class)
+                    .filter { it.pinned != true }.forEach { it.delete() }
         }
         return super.onOptionsItemSelected(item)
     }
