@@ -20,6 +20,8 @@
         </activity>
         <activity android:name=".ui.SettingsActivity"
                   android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ui.ScaleSettingsActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

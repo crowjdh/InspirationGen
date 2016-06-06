@@ -1,12 +1,15 @@
 package kr.blogspot.crowjdh.inspirationgen.ui.adapters
 
 import kr.blogspot.crowjdh.inspirationgen.extensions.insertOrUpdate
+import kr.blogspot.crowjdh.inspirationgen.extensions.startActivity
 import kr.blogspot.crowjdh.inspirationgen.music.models.NoteLength
 import kr.blogspot.crowjdh.inspirationgen.music.models.Program
 import kr.blogspot.crowjdh.inspirationgen.music.models.TimeSignature
+import kr.blogspot.crowjdh.inspirationgen.ui.ScaleSettingsActivity
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SettingsAdapter.Settings.Companion.SETTINGS_TYPE_BAR
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SettingsAdapter.Settings.Companion.SETTINGS_TYPE_SHEET
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SettingsAdapter.Settings.Companion.SettingsType
+import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SettingsAdapter.Settings.Companion.VALUE_TYPE_CUSTOM
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SettingsAdapter.Settings.Companion.VALUE_TYPE_RADIO
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SettingsAdapter.Settings.Companion.VALUE_TYPE_VALUE
 import kr.blogspot.crowjdh.inspirationgen.ui.adapters.SettingsAdapter.Settings.Companion.ValueType
@@ -55,7 +58,7 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
     }
 
     override fun onSelectRadio(item: GeneralSettings, index: Int) {
-        return when (item) {
+        when (item) {
             GeneralSettings.TIME_SIGNATURE_NOTE_LENGTH -> {
                 barOptions.insertOrUpdate {
                     barOptions.timeSignature = TimeSignature(
@@ -68,6 +71,14 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
                     barOptions.program = Program.values()[index]
                 }
             }
+            else -> {}
+        }
+    }
+
+    override fun onCustomAction(holder: SettingsViewHolder, item: GeneralSettings, index: Int) {
+        when (item) {
+            GeneralSettings.SCALE -> holder.rootView.context.startActivity(
+                    ScaleSettingsActivity::class)
             else -> {}
         }
     }
@@ -90,7 +101,7 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
         BPM("BPM", VALUE_TYPE_VALUE, SETTINGS_TYPE_SHEET),
         TIME_SIGNATURE_COUNT("Note Count Per Bar", VALUE_TYPE_VALUE, SETTINGS_TYPE_BAR),
         TIME_SIGNATURE_NOTE_LENGTH("Note Length Per Bar", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR),
-        SCALE("Scale", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR),
+        SCALE("Scale", VALUE_TYPE_CUSTOM, SETTINGS_TYPE_BAR),
         BAR_COUNT("Bar Count", VALUE_TYPE_VALUE, SETTINGS_TYPE_BAR),
         PROGRAM("Midi Program", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR);
     }
