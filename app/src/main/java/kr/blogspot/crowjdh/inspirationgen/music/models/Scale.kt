@@ -9,7 +9,8 @@ import kr.blogspot.crowjdh.inspirationgen.extensions.toPrefixSum
  * Scale
  */
 
-private const val PITCH_C4 = 60
+// C3
+private const val BASE_C = 48
 
 class Scale(val key: Key,
             val intervals: Intervals) {
@@ -31,13 +32,13 @@ class Scale(val key: Key,
     }
 
     enum class Key(val displayName: String, val root: Int) {
-        C("C", PITCH_C4), C_SHARP("C#", PITCH_C4 + 1),
-        D("D", PITCH_C4 + 2), D_SHARP("D#", PITCH_C4 + 3),
-        E("E", PITCH_C4 + 4),
-        F("F", PITCH_C4 + 5), F_SHARP("F#", PITCH_C4 + 6),
-        G("G", PITCH_C4 + 7), G_SHARP("G#", PITCH_C4 + 8),
-        A("A", PITCH_C4 + 9), A_SHARP("A#", PITCH_C4 + 10),
-        B("B", PITCH_C4 + 11)
+        C("C", BASE_C), C_SHARP("C#", BASE_C + 1),
+        D("D", BASE_C + 2), D_SHARP("D#", BASE_C + 3),
+        E("E", BASE_C + 4),
+        F("F", BASE_C + 5), F_SHARP("F#", BASE_C + 6),
+        G("G", BASE_C + 7), G_SHARP("G#", BASE_C + 8),
+        A("A", BASE_C + 9), A_SHARP("A#", BASE_C + 10),
+        B("B", BASE_C + 11)
     }
 
     enum class Intervals(val displayName: String, vararg intervals: Int) {
