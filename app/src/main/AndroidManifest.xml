@@ -19,8 +19,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.GeneralSettingsActivity"
+                  android:label="@string/toolbar_title_general_settings"
                   android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ui.ScaleSettingsActivity"
+                  android:label="@string/toolbar_title_scale_settings"
                   android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

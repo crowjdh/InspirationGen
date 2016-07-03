@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">InspirationGen</string>
+    <string name="app_name">Migniter</string>
+
+    <string name="toolbar_title_general_settings">General Settings</string>
+    <string name="toolbar_title_scale_settings">Scale Settings</string>
 
     <string name="play">Play</string>
     <string name="settings">Settings</string>
