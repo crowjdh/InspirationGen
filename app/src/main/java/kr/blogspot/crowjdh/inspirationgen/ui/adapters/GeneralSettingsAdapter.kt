@@ -37,6 +37,8 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
             GeneralSettings.BAR_COUNT -> barOptions.barCount.toString()
             GeneralSettings.TIME_SIGNATURE_NOTE_LENGTH -> barOptions.timeSignature.noteLength.name
             GeneralSettings.PROGRAM -> barOptions.program.title
+            GeneralSettings.ENABLE_CLICK_TRACK ->
+                ClickTrackStatus.fromEnabled(masterSettings.enableClickTrack).title
             else -> null
         }
     }
@@ -45,6 +47,7 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
         return when (item) {
             GeneralSettings.TIME_SIGNATURE_NOTE_LENGTH -> NoteLength.values().map { it.name }
             GeneralSettings.PROGRAM -> Program.values().map { it.title }
+            GeneralSettings.ENABLE_CLICK_TRACK -> ClickTrackStatus.values().map { it.title }
             else -> null
         }?.toTypedArray()
     }
@@ -53,6 +56,8 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
         return when (item) {
             GeneralSettings.TIME_SIGNATURE_NOTE_LENGTH -> barOptions.timeSignature.noteLength.ordinal
             GeneralSettings.PROGRAM -> barOptions.program.ordinal
+            GeneralSettings.ENABLE_CLICK_TRACK ->
+                ClickTrackStatus.fromEnabled(masterSettings.enableClickTrack).ordinal
             else -> null
         }
     }
@@ -69,6 +74,11 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
             GeneralSettings.PROGRAM -> {
                 barOptions.insertOrUpdate {
                     barOptions.program = Program.values()[index]
+                }
+            }
+            GeneralSettings.ENABLE_CLICK_TRACK -> {
+                masterSettings.insertOrUpdate {
+                    masterSettings.enableClickTrack = ClickTrackStatus.values()[index].enabled
                 }
             }
             else -> {}
@@ -103,7 +113,18 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
         TIME_SIGNATURE_NOTE_LENGTH("Note Length Per Bar", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR),
         SCALE("Scale", VALUE_TYPE_CUSTOM, SETTINGS_TYPE_BAR),
         BAR_COUNT("Bar Count", VALUE_TYPE_VALUE, SETTINGS_TYPE_BAR),
-        PROGRAM("Midi Program", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR);
+        PROGRAM("Midi Program", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR),
+        ENABLE_CLICK_TRACK("Click Track", VALUE_TYPE_RADIO, SETTINGS_TYPE_BAR);
+    }
+
+    private enum class ClickTrackStatus(val title: String, val enabled: Boolean) {
+        ON("On", true),
+        OFF("Off", false);
+
+        companion object {
+            fun fromEnabled(enabled: Boolean): ClickTrackStatus =
+                    ClickTrackStatus.values().filter { it.enabled == enabled } [0]
+        }
     }
 
 }

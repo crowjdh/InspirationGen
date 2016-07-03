@@ -23,6 +23,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
         dropTable(db, Bar.tableName)
         dropTable(db, SheetOptions.tableName)
         dropTable(db, BarOptions.tableName)
+        dropTable(db, MasterSettings.tableName)
         createAllTables(db)
     }
 
@@ -31,6 +32,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
         db.execSQL(SQL_CREATE_BAR_ENTRY)
         db.execSQL(SQL_CREATE_SHEET_OPTIONS_ENTRY)
         db.execSQL(SQL_CREATE_BAR_OPTIONS_ENTRY)
+        db.execSQL(SQL_CREATE_MASTER_SETTINGS_ENTRY)
     }
 
     private fun dropTable(db: SQLiteDatabase, tableName: String) {
@@ -38,7 +40,7 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
     }
 
     companion object {
-        private val databaseVersion = 7
+        private val databaseVersion = 8
         private val invalidDatabaseVersion = -1
         private val databaseName = "InsGenDatabase"
 
@@ -81,6 +83,11 @@ class InsGenDbHelper(context: Context) : SQLiteOpenHelper(context, InsGenDbHelpe
                         BarOptions.noteOverRestBias + type_text + comma_sep +
                         BarOptions.program          + type_text + comma_sep +
                         BarOptions.atomicBaseSeed   + type_text +
+                        " )"
+        private val SQL_CREATE_MASTER_SETTINGS_ENTRY =
+                "CREATE TABLE " + MasterSettings.tableName + "(" +
+                        MasterSettings._id              + type_autoIncrement + comma_sep +
+                        MasterSettings.enableClickTrack + type_text +
                         " )"
     }
 }

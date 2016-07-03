@@ -54,4 +54,12 @@ abstract class InsGenDbContract {
             val atomicBaseSeed = "atomic_base_seed"
         }
     }
+
+    abstract class MasterSettings {
+        companion object Entry: Table {
+            val _id = "_id"
+            override val tableName = "master_settings"
+            val enableClickTrack = "enable_click_track"
+        }
+    }
 }

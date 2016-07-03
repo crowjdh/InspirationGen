@@ -17,6 +17,7 @@ import kr.blogspot.crowjdh.inspirationgen.extensions.database
 import kr.blogspot.crowjdh.inspirationgen.extensions.firstOrDefault
 import kr.blogspot.crowjdh.inspirationgen.extensions.insertOrUpdate
 import kr.blogspot.crowjdh.inspirationgen.music.models.Bar
+import kr.blogspot.crowjdh.inspirationgen.music.models.MasterSettings
 import kr.blogspot.crowjdh.inspirationgen.music.models.Sheet
 import rx.Subscription
 
@@ -35,6 +36,9 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
     protected val barOptions
             = database.all<Bar.Generator.Options>(Bar.Generator.Options::class)
             .firstOrDefault(Bar.Generator.Options.default)
+    protected val masterSettings
+            = database.all<MasterSettings>(MasterSettings::class)
+            .firstOrDefault(MasterSettings.default)
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): SettingsAdapter.SettingsViewHolder? {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.vh_setting, parent, false)
@@ -130,6 +134,9 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
                         Settings.SETTINGS_TYPE_BAR -> barOptions.insertOrUpdate {
                             insertOrUpdateOnValueChange(item, text)
                         }
+                        Settings.SETTINGS_TYPE_MASTER -> masterSettings.insertOrUpdate {
+                            insertOrUpdateOnValueChange(item, text)
+                        }
                         else -> throw UnsupportedOperationException(
                                 "settingsType ${item.settingsType} not supported yet.")
                     }
@@ -169,13 +176,14 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
 
             const val SETTINGS_TYPE_SHEET = 0L
             const val SETTINGS_TYPE_BAR = 1L
+            const val SETTINGS_TYPE_MASTER = 2L
 
             @IntDef(VALUE_TYPE_VALUE, VALUE_TYPE_RADIO, VALUE_TYPE_CUSTOM)
             @Target(AnnotationTarget.VALUE_PARAMETER)
             @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
             annotation class ValueType
 
-            @IntDef(SETTINGS_TYPE_SHEET, SETTINGS_TYPE_BAR)
+            @IntDef(SETTINGS_TYPE_SHEET, SETTINGS_TYPE_BAR, SETTINGS_TYPE_MASTER)
             @Target(AnnotationTarget.VALUE_PARAMETER)
             @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
             annotation class SettingsType

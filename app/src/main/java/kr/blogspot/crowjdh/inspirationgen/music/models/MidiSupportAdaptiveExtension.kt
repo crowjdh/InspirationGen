@@ -29,8 +29,13 @@ fun TimeSignature.toMidiTimeSignature(): kr.blogspot.crowjdh.midisupport.event.m
 
 fun Program.toMidiEvent(channel: Int = 0) = ProgramChange(0L, channel, number)
 
-fun Sheet.toMidiFile(): MidiFile = MidiFile(MidiFile.DEFAULT_RESOLUTION, arrayListOf(
-        createSoundMidiTrack(), createClickMidiTrack()))
+fun Sheet.toMidiFile(enableClickTrack: Boolean): MidiFile {
+    val tracks = arrayListOf(createSoundMidiTrack())
+    if (enableClickTrack) {
+        tracks.add(createClickMidiTrack())
+    }
+    return MidiFile(MidiFile.DEFAULT_RESOLUTION, tracks)
+}
 
 private fun Sheet.createSoundMidiTrack(): MidiTrack {
     val soundTrack = createBaseMidiTrack()

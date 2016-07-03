@@ -210,6 +210,20 @@ private val cursorToBarOptionsMapper: (cursor: Cursor) -> Bar.Generator.Options 
     }
 }
 
+private val masterSettingsToContentValuesMapper: (settings: MasterSettings) -> ContentValues = {
+    val values = ContentValues()
+
+    values.put(InsGenDbContract.MasterSettings.enableClickTrack, it.enableClickTrack.toGsonString())
+    values
+}
+
+private val cursorToMasterSettingsMapper: (cursor: Cursor) -> MasterSettings = {
+    MasterSettings.create {
+        _id = it.getLong(InsGenDbContract.MasterSettings._id)
+        enableClickTrack = it.getString(InsGenDbContract.MasterSettings.enableClickTrack).fromGsonString()
+    }
+}
+
 private val modelToMapperMap = hashMapOf<KClass<*>, MapperMeta<*>>(
         Pair(Sheet::class,
                 MapperMeta(InsGenDbContract.Sheet.tableName,
@@ -226,4 +240,8 @@ private val modelToMapperMap = hashMapOf<KClass<*>, MapperMeta<*>>(
         Pair(Bar.Generator.Options::class,
                 MapperMeta(InsGenDbContract.BarOptions.tableName,
                         barOptionsToContentValuesMapper,
-                        cursorToBarOptionsMapper)))
+                        cursorToBarOptionsMapper)),
+        Pair(MasterSettings::class,
+                MapperMeta(InsGenDbContract.MasterSettings.tableName,
+                        masterSettingsToContentValuesMapper,
+                        cursorToMasterSettingsMapper)))
