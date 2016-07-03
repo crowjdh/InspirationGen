@@ -27,22 +27,54 @@ fun TimeSignature.toMidiTimeSignature(): kr.blogspot.crowjdh.midisupport.event.m
     return midiTimeSignature
 }
 
-fun Program.toMidiEvent() = ProgramChange(0L, 0, number)
+fun Program.toMidiEvent(channel: Int = 0) = ProgramChange(0L, channel, number)
 
-fun Sheet.toMidiFile(): MidiFile {
+fun Sheet.toMidiFile(): MidiFile = MidiFile(MidiFile.DEFAULT_RESOLUTION, arrayListOf(
+        createSoundMidiTrack(), createClickMidiTrack()))
+
+private fun Sheet.createSoundMidiTrack(): MidiTrack {
+    val soundTrack = createBaseMidiTrack()
+
+    var accumulatedTicks = 0L
+    bars.forEach { bar ->
+        bar.toEachMidiEvents(accumulatedTicks) { event, ticks ->
+            soundTrack.insertEvent(event)
+            accumulatedTicks += ticks
+        }
+    }
+    return soundTrack
+}
+
+private fun Sheet.createClickMidiTrack(): MidiTrack {
+    val clickChannel = 9
+
+    val track = createBaseMidiTrack()
+    track.insertEvent(Program.STEEL_DRUMS.toMidiEvent(clickChannel))
+
+    var accumulatedTicks = 0L
+    bars.map { it.timeSignature }.forEach {
+        track.insertEvent(it.toMidiTimeSignature())
+        for (idx in 1..it.count) {
+            Note(it.noteLength, 37).toMidiOnOffNotes(accumulatedTicks,
+                    channel = clickChannel) { on, off ->
+                on.velocity = if (idx == 1) 127 else 90
+                track.insertEvent(on)
+                track.insertEvent(off)
+            }
+            accumulatedTicks += it.noteLength.ticks()
+        }
+    }
+
+    return track
+}
+
+private fun Sheet.createBaseMidiTrack(): MidiTrack {
     val track = MidiTrack()
     val tempo = Tempo()
     tempo.bpm = bpm.toFloat()
     track.insertEvent(tempo)
 
-    var accumulatedTicks = 0L
-    bars.forEach { bar ->
-        bar.toEachMidiEvents(accumulatedTicks) { event, ticks ->
-            track.insertEvent(event)
-            accumulatedTicks += ticks
-        }
-    }
-    return MidiFile(MidiFile.DEFAULT_RESOLUTION, arrayListOf(track))
+    return track
 }
 
 fun Bar.toEachMidiEvents(startTicks: Long = 0L, block: (event: MidiEvent, ticks: Long) -> Unit) {
@@ -60,9 +92,9 @@ fun Bar.toEachMidiEvents(startTicks: Long = 0L, block: (event: MidiEvent, ticks:
     }
 }
 
-fun Notable.toMidiOnOffNotes(startTicks: Long,
+fun Notable.toMidiOnOffNotes(startTicks: Long, channel: Int = 0,
                              block: (event: NoteOn, event: NoteOff) -> Unit) {
     val endTicks = startTicks + ticks
     val pitch = if (this is Note) pitch else 0
-    block(NoteOn(startTicks, 0, pitch, 100), NoteOff(endTicks, 0, pitch, 0))
+    block(NoteOn(startTicks, channel, pitch, 100), NoteOff(endTicks, channel, pitch, 0))
 }
