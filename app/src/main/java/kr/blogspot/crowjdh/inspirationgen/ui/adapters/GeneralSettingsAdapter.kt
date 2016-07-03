@@ -62,7 +62,7 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
         }
     }
 
-    override fun onSelectRadio(item: GeneralSettings, index: Int) {
+    override fun onSelectRadio(item: GeneralSettings, index: Int): Boolean {
         when (item) {
             GeneralSettings.TIME_SIGNATURE_NOTE_LENGTH -> {
                 barOptions.insertOrUpdate {
@@ -83,6 +83,7 @@ class GeneralSettingsAdapter(): SettingsAdapter<GeneralSettingsAdapter.GeneralSe
             }
             else -> {}
         }
+        return true
     }
 
     override fun onCustomAction(holder: SettingsViewHolder, item: GeneralSettings, index: Int) {

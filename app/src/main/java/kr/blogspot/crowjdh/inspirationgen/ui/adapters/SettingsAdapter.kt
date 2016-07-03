@@ -109,8 +109,11 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
                 AlertDialog.Builder(holder.titleView.context)
                         .setTitle(item.title)
                         .setSingleChoiceItems(titles, index, { dialog, i ->
-                            onSelectRadio(item, i)
+                            val closeDialog = onSelectRadio(item, i)
                             notifyItemChanged(position)
+                            if (closeDialog) {
+                                dialog.dismiss()
+                            }
                         }).show()
             }
         } else if (item.valueType == Settings.VALUE_TYPE_CUSTOM) {
@@ -148,7 +151,10 @@ abstract class SettingsAdapter<T: SettingsAdapter.Settings>():
     abstract fun getContents(item: T): String?
     abstract fun getRadioTitles(item: T): Array<String>?
     abstract fun getSelectedRadioIndex(item: T): Int?
-    abstract fun onSelectRadio(item: T, index: Int)
+    /**
+     * Perform and return true to close radio dialog.
+     */
+    abstract fun onSelectRadio(item: T, index: Int): Boolean
     abstract fun onCustomAction(holder: SettingsViewHolder, item: T, index: Int)
     abstract fun insertOrUpdateOnValueChange(item: T, text: String)
 

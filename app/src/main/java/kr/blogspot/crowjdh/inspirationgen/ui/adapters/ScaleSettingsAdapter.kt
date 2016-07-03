@@ -47,8 +47,8 @@ class ScaleSettingsAdapter(): SettingsAdapter<ScaleSettingsAdapter.ScaleSettings
         }
     }
 
-    override fun onSelectRadio(item: ScaleSettings, index: Int) {
-        return when (item) {
+    override fun onSelectRadio(item: ScaleSettings, index: Int): Boolean {
+        when (item) {
             ScaleSettings.KEY -> {
                 barOptions.insertOrUpdate {
                     barOptions.scale = Scale(Scale.Key.values()[index], barOptions.scale.intervals)
@@ -61,6 +61,7 @@ class ScaleSettingsAdapter(): SettingsAdapter<ScaleSettingsAdapter.ScaleSettings
             }
             else -> {}
         }
+        return true
     }
 
     override fun insertOrUpdateOnValueChange(item: ScaleSettings, text: String) {
